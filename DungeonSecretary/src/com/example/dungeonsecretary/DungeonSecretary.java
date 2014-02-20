@@ -18,5 +18,5 @@ public class DungeonSecretary extends Activity {
 		getMenuInflater().inflate(R.menu.dungeon_secretary, menu);
 		return true;
 	}
-
+ //test
 }
