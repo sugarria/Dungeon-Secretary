@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements OnClickListener,
 	private ConnectionResult mConnectionResult;
 
 	private SignInButton btnSignIn;
-	private Button btnSignOut, btnRevokeAccess;
+	private Button btnSignOut, btnRevokeAccess, btnNextView;
 	private ImageView imgProfilePic;
 	private TextView txtName, txtEmail;
 	private LinearLayout llProfileLayout;
@@ -66,6 +66,7 @@ public class MainActivity extends Activity implements OnClickListener,
 
 		btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
 		btnSignOut = (Button) findViewById(R.id.btn_sign_out);
+		btnNextView = (Button) findViewById(R.id.btn_next_view);
 		btnRevokeAccess = (Button) findViewById(R.id.btn_revoke_access);
 		imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
 		txtName = (TextView) findViewById(R.id.txtName);
@@ -76,6 +77,7 @@ public class MainActivity extends Activity implements OnClickListener,
 		btnSignIn.setOnClickListener(this);
 		btnSignOut.setOnClickListener(this);
 		btnRevokeAccess.setOnClickListener(this);
+		btnNextView.setOnClickListener(this);
 
 		mGoogleApiClient = new GoogleApiClient.Builder(this)
 				.addConnectionCallbacks(this)
@@ -168,11 +170,13 @@ public class MainActivity extends Activity implements OnClickListener,
 		if (isSignedIn) {
 			btnSignIn.setVisibility(View.GONE);
 			btnSignOut.setVisibility(View.VISIBLE);
+			btnNextView.setVisibility(View.VISIBLE);
 			btnRevokeAccess.setVisibility(View.VISIBLE);
 			llProfileLayout.setVisibility(View.VISIBLE);
 		} else {
 			btnSignIn.setVisibility(View.VISIBLE);
 			btnSignOut.setVisibility(View.GONE);
+			btnNextView.setVisibility(View.GONE);
 			btnRevokeAccess.setVisibility(View.GONE);
 			llProfileLayout.setVisibility(View.GONE);
 		}
@@ -234,6 +238,7 @@ public class MainActivity extends Activity implements OnClickListener,
 	 * */
 	@Override
 	public void onClick(View v) {
+		Log.e("Error", "ID: " + v.getId());
 		switch (v.getId()) {
 		case R.id.btn_sign_in:
 			// Signin button clicked
@@ -244,8 +249,12 @@ public class MainActivity extends Activity implements OnClickListener,
 			signOutFromGplus();
 			break;
 		case R.id.btn_revoke_access:
-			// Revoke access button clicked
+			// Revoke access button clicked			
 			revokeGplusAccess();
+			break;
+		case R.id.btn_next_view:
+			//Next view button clicked
+			gotoNextView();
 			break;
 		}
 	}
@@ -291,6 +300,12 @@ public class MainActivity extends Activity implements OnClickListener,
 		}
 	}
 
+	private void gotoNextView()
+	{
+		Intent i = new Intent(getApplicationContext(), SlideyActivity.class);
+		startActivity(i);
+	}
+	
 	/**
 	 * Background Async task to load user profile picture from url
 	 * */
