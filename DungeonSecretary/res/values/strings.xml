@@ -7,7 +7,7 @@
     <!-- Button text -->
     <string name="btn_logout_from_google">Logout from Google</string>
     <string name="btn_revoke_access">Revoke Access</string>
-    <string name="btn_next_view">Go To Next View</string>
+    <string name="btn_next_view">Next</string>
 
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>
