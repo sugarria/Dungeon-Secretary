@@ -61,6 +61,7 @@ public class MainActivity extends Activity implements OnClickListener,
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.i("Lifecycle", "on create....");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
@@ -86,17 +87,34 @@ public class MainActivity extends Activity implements OnClickListener,
 	}
 
 	protected void onStart() {
+		Log.i("Lifecycle", "on start....");
 		super.onStart();
 		mGoogleApiClient.connect();
 	}
 
 	protected void onStop() {
+		Log.i("Lifecycle", "on stop....");
 		super.onStop();
 		if (mGoogleApiClient.isConnected()) {
 			mGoogleApiClient.disconnect();
 		}
 	}
 
+	protected void onDestroy(){
+		Log.i("Lifecycle", "on destroy....");
+		super.onDestroy();
+	}
+	
+	protected void onPause(){
+		Log.i("Lifecycle", "on pause....");
+		super.onPause();
+	}
+	
+	protected void onResume(){
+		Log.i("Lifecycle", "on resume....");
+		super.onResume();
+	}
+	
 	/**
 	 * Method to resolve any signin errors
 	 * */
