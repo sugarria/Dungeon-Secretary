@@ -32,7 +32,7 @@ import com.google.android.gms.plus.model.people.Person;
 
 public class MainActivity extends Activity implements OnClickListener,
 		ConnectionCallbacks, OnConnectionFailedListener {
-
+// change
 	private static final int RC_SIGN_IN = 0;
 	// Logcat tag
 	private static final String TAG = "MainActivity";
