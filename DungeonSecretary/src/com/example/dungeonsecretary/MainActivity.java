@@ -32,7 +32,7 @@ import com.google.android.gms.plus.model.people.Person;
 
 public class MainActivity extends Activity implements OnClickListener,
 		ConnectionCallbacks, OnConnectionFailedListener {
-// change
+
 	private static final int RC_SIGN_IN = 0;
 	// Logcat tag
 	private static final String TAG = "MainActivity";
@@ -42,7 +42,6 @@ public class MainActivity extends Activity implements OnClickListener,
 
 	// Google client to interact with Google API
 	private GoogleApiClient mGoogleApiClient;
-	//add a comment
 
 	/**
 	 * A flag indicating that a PendingIntent is in progress and prevents us
