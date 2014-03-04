@@ -42,6 +42,7 @@ public class MainActivity extends Activity implements OnClickListener,
 
 	// Google client to interact with Google API
 	private GoogleApiClient mGoogleApiClient;
+	//add a comment
 
 	/**
 	 * A flag indicating that a PendingIntent is in progress and prevents us
