@@ -2,14 +2,24 @@ package com.example.dungeonsecretary;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.example.dungeonsecretary.adapter.CharacterDrawerListAdapter;
 import com.example.dungeonsecretary.adapter.NavDrawerListAdapter;
+import com.example.dungeonsecretary.model.CharacterData;
+import com.example.dungeonsecretary.model.CharacterDrawerItem;
 import com.example.dungeonsecretary.model.NavDrawerItem;
+import com.example.dungeonsecretary.model.UserData;
+import com.example.dungeonsecretary.sql.DungeonDataSource;
+import com.example.dungeonsecretary.sql.MySQLiteHelper;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -26,6 +36,7 @@ public class SlideyActivity extends Activity {
 	private DrawerLayout leftMDrawerLayout, rightMDrawerLayout;
 	private ListView leftMDrawerList, rightMDrawerList;
 	private ActionBarDrawerToggle leftMDrawerToggle, rightMDrawerToggle;
+	private DungeonDataSource dbData;
 	
 	//nav drawer title
 	private CharSequence leftMDrawerTitle, rightMDrawerTitle;
@@ -34,11 +45,10 @@ public class SlideyActivity extends Activity {
 	private CharSequence mTitle;
 	
 	//left slide menu items
-	private String[] leftNavMenuTitles;
-	private TypedArray leftNavMenuIcons;
+	private List<CharacterData> allCharacters;
 	
-	private ArrayList<NavDrawerItem> leftNavDrawerItems;
-	private NavDrawerListAdapter leftAdapter;
+	private ArrayList<CharacterDrawerItem> leftCharDrawerItems;
+	private CharacterDrawerListAdapter charLeftAdapter;
 	
 	//right slide menu items
 	private String[] rightNavMenuTitles;
@@ -47,41 +57,28 @@ public class SlideyActivity extends Activity {
 	private ArrayList<NavDrawerItem> rightNavDrawerItems;
 	private NavDrawerListAdapter rightAdapter;
 	
+	//If you need to manually reset the database and build it from scratch 
+	//when the activity starts set this to true.
+	private boolean DEV_resetDatabase = false;
+	
+	private void fillCharacterList()
+	{
+		allCharacters = dbData.getAllCharacters();
+		leftCharDrawerItems = new ArrayList<CharacterDrawerItem>();
+		for(int i = 0; i < allCharacters.size(); i++)
+		{
+			leftCharDrawerItems.add(new CharacterDrawerItem(allCharacters.get(i), "Shawn"));
+		}
+
+		charLeftAdapter = new CharacterDrawerListAdapter(getApplicationContext(), leftCharDrawerItems);
+        leftMDrawerList.setAdapter(charLeftAdapter);
+	}
+	
 	private void setupLeftDrawer()
 	{
-		//load slide menu items
-		leftNavMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
-		
-		//nav drawer icons from resources
-		leftNavMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
-		
 		leftMDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        leftMDrawerList = (ListView) findViewById(R.id.list_slidermenu_left);
- 
-		leftNavDrawerItems = new ArrayList<NavDrawerItem>();
-		
-		//adding nav drawer items to array
-		//home
-		leftNavDrawerItems.add(new NavDrawerItem(leftNavMenuTitles[0], leftNavMenuIcons.getResourceId(0, -1)));
-		// Find People
-        leftNavDrawerItems.add(new NavDrawerItem(leftNavMenuTitles[1], leftNavMenuIcons.getResourceId(1, -1)));
-        // Photos
-        leftNavDrawerItems.add(new NavDrawerItem(leftNavMenuTitles[2], leftNavMenuIcons.getResourceId(2, -1)));
-        // Communities, Will add a counter here
-        //leftNavDrawerItems.add(new NavDrawerItem(leftNavMenuTitles[3], leftNavMenuIcons.getResourceId(3, -1), true, "22"));
-        // Pages
-        //leftNavDrawerItems.add(new NavDrawerItem(leftNavMenuTitles[4], leftNavMenuIcons.getResourceId(4, -1)));
-        // What's hot, We  will add a counter here
-        //leftNavDrawerItems.add(new NavDrawerItem(leftNavMenuTitles[5], leftNavMenuIcons.getResourceId(5, -1), true, "50+"));
-
-
-        // Recycle the typed array
-        leftNavMenuIcons.recycle();
- 
-        // setting the nav drawer list adapter
-        leftAdapter = new NavDrawerListAdapter(getApplicationContext(),
-                leftNavDrawerItems);
-        leftMDrawerList.setAdapter(leftAdapter);
+		leftMDrawerList = (ListView) findViewById(R.id.list_slidermenu_left);
+		fillCharacterList();
         
         leftMDrawerToggle = new ActionBarDrawerToggle(this, leftMDrawerLayout,
                 R.drawable.ic_drawer, //nav menu toggle icon
@@ -95,6 +92,7 @@ public class SlideyActivity extends Activity {
             }
  
             public void onDrawerOpened(View drawerView) {
+            	fillCharacterList();
                 getActionBar().setTitle(leftMDrawerTitle);
                 // calling onPrepareOptionsMenu() to hide action bar icons
                 invalidateOptionsMenu();
@@ -163,12 +161,76 @@ public class SlideyActivity extends Activity {
         rightMDrawerList.setOnItemClickListener(new SlideMenuClickListener());
 	}
 	
+	private void SampleDBEntries()
+	{
+		UserData user = new UserData();
+		user.setGoogleAccount("shawn@gmail.com");
+		user.setUserName("Shawn");		
+		dbData.InsertUser(user);
+
+		UserData user2 = new UserData();
+		user2.setGoogleAccount("otherUser@gmail.com");
+		user2.setUserName("User that isn't me");		
+		dbData.InsertUser(user2);
+
+		CharacterData test1 = new CharacterData();
+		CharacterData test2 = new CharacterData();
+		CharacterData test3 = new CharacterData();
+		CharacterData test4 = new CharacterData();
+		
+		test1.setName("Character1");
+		test2.setName("Character2");
+		test3.setName("Character3");
+		test4.setName("Character4");
+				
+		test1.setOwnerId(user.getId());
+		test2.setOwnerId(user2.getId());
+		test3.setOwnerId(user2.getId());
+		test4.setOwnerId(user.getId());
+		
+		test1.setSystem("D&D 3.5");
+		test2.setSystem("Pathfinder");
+		test3.setSystem("FATE Core");
+		test4.setSystem("D&D 3.5");
+
+		test1.setPublic(false);
+		test2.setPublic(false);
+		test3.setPublic(true);
+		test4.setPublic(true);
+
+		test1.setShared(true);
+		test2.setShared(false);
+		test3.setShared(true);
+		test4.setShared(true);
+
+		dbData.InsertCharacter(test1);
+		dbData.InsertCharacter(test2);
+		dbData.InsertCharacter(test3);
+		dbData.InsertCharacter(test4);
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.slidey_layout);
 		
 		mTitle = leftMDrawerTitle = rightMDrawerTitle= getTitle();
+		
+		dbData = DungeonDataSource.getInstance(getApplicationContext());
+		dbData.open();
+		if(DEV_resetDatabase)
+		{
+			dbData.resetDatabase();
+			dbData.close();
+			dbData.open();
+		}
+		allCharacters = dbData.getAllCharacters();
+		if(allCharacters.size() == 0)
+		{
+			SampleDBEntries();
+			allCharacters = dbData.getAllCharacters();
+		}
 		
 		setupLeftDrawer();
 		setupRightDrawer();
@@ -182,7 +244,6 @@ public class SlideyActivity extends Activity {
             // on first time display view for first nav item
             displayView(0);
         }
-        
     }
  
 	private class SlideMenuClickListener implements ListView.OnItemClickListener
@@ -191,7 +252,6 @@ public class SlideyActivity extends Activity {
 		{
 			displayView(position);
 		}
-		
 	}
 	
 	private void displayView(int position)
@@ -212,7 +272,7 @@ public class SlideyActivity extends Activity {
 			//update selected item and title, then close the drawer
 			leftMDrawerList.setItemChecked(position, true);
 			leftMDrawerList.setSelection(position);
-			setTitle(leftNavMenuTitles[position]);
+			setTitle("Title Thing");
 			leftMDrawerLayout.closeDrawer(leftMDrawerList);
 		} else 
 		{

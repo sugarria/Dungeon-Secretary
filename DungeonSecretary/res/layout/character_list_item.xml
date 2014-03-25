@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="@drawable/list_selector"
+    tools:context=".MainActivity" >
+
+    <!-- ImageView
+        android:id="@+id/icon"
+        android:layout_width="25dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:contentDescription="@string/desc_list_item_icon"
+        android:src="@drawable/ic_home" /-->
+
+    <TextView
+        android:id="@+id/character_name"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="false"
+        android:gravity="center_vertical"
+        android:layout_marginRight="12dp"        
+        android:paddingRight="8dp"
+        android:paddingLeft="8dp"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:textColor="@color/list_item_title"
+        tools:ignore="NewApi" />
+    
+    <TextView
+        android:id="@+id/owner_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/character_name"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/counter_bg"
+        android:textColor="@color/counter_text_color" />
+    
+    <TextView
+        android:id="@+id/system"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/owner_name"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/counter_bg"
+        android:textColor="@color/counter_text_color" />
+
+    
+</RelativeLayout>

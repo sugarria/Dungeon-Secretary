@@ -12,8 +12,26 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class DungeonDataSource {
+	
+	//make it a singleton
+	private static DungeonDataSource instance;
+	private DungeonDataSource(Context context)
+	{
+		dbHelper = new MySQLiteHelper(context);
+	}
+	
+	public static DungeonDataSource getInstance(Context context)
+	{
+		if(instance == null)
+		{
+			instance = new DungeonDataSource(context);
+		}
+		return instance;
+	}
+	
 	
 	//Database fields
 	private SQLiteDatabase database;
@@ -32,16 +50,19 @@ public class DungeonDataSource {
 	
 	
 	
-	public DungeonDataSource(Context context) {
-		dbHelper = new MySQLiteHelper(context);
-	}
-	
 	public void open() throws SQLException {
+		Log.i("SQLSetup", "Calling getWritableDatabase");
 		database = dbHelper.getWritableDatabase();
+		Log.i("SQLSetup", "After getWritableDatabase");
 	}
 	
 	public void close() {
 		dbHelper.close();
+	}
+	
+	public void resetDatabase()
+	{
+		dbHelper.resetDatabase(database);
 	}
 	
 	/**
@@ -116,7 +137,7 @@ public class DungeonDataSource {
 		//duplication/error checking
 		//get data from character and insert it
 		ContentValues values = new ContentValues();
-		values.put(MySQLiteHelper.CHARACTERS_COLUMN_ID, character.getOwnerId());
+		values.put(MySQLiteHelper.CHARACTERS_COLUMN_OWNER_ID, character.getOwnerId());
 		values.put(MySQLiteHelper.CHARACTERS_COLUMN_NAME, character.getName());
 		values.put(MySQLiteHelper.CHARACTERS_COLUMN_PUBLIC, character.getPublic());
 		values.put(MySQLiteHelper.CHARACTERS_COLUMN_SHARED, character.getShared());
@@ -128,7 +149,7 @@ public class DungeonDataSource {
 	public void UpdateCharacter(CharacterData character)
 	{
 		ContentValues values = new ContentValues();
-		values.put(MySQLiteHelper.CHARACTERS_COLUMN_ID, character.getOwnerId());
+		values.put(MySQLiteHelper.CHARACTERS_COLUMN_OWNER_ID, character.getOwnerId());
 		values.put(MySQLiteHelper.CHARACTERS_COLUMN_NAME, character.getName());
 		values.put(MySQLiteHelper.CHARACTERS_COLUMN_PUBLIC, character.getPublic());
 		values.put(MySQLiteHelper.CHARACTERS_COLUMN_SHARED, character.getShared());

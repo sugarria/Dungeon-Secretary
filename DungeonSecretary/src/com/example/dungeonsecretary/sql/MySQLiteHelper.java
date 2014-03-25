@@ -18,7 +18,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 			+ TABLE_USERS + "(" 
 			+ USERS_COLUMN_ID + " integer primary key autoincrement, "
 			+ USERS_COLUMN_GOOGLE_ACCOUNT + " text not null, " 
-			+ USERS_COLUMN_USER_NAME + "text not null);";
+			+ USERS_COLUMN_USER_NAME + " text not null);";
 	
 	public static final String TABLE_CHARACTERS = "characters";
 	public static final String CHARACTERS_COLUMN_ID = "_id";
@@ -65,6 +65,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 	
 	@Override
 	public void onCreate(SQLiteDatabase database) {
+		Log.i("SQLSetup", "Creating databases");
 		database.execSQL(USERS_CREATE);
 		database.execSQL(CHARACTERS_CREATE);
 		database.execSQL(STATS_CREATE);
@@ -81,6 +82,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 				+ newVersion + ", which will destroy all old data");
 		//db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMMENTS);
 		//onCreate(db);*/
+	}
+	
+
+	public void resetDatabase(SQLiteDatabase db)
+	{
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHARACTERS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATS);
+		onCreate(db);
 	}
 	
 	

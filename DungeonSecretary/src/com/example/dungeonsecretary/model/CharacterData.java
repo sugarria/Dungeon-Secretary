@@ -35,6 +35,16 @@ public class CharacterData {
 	{
 		this.ownerId = ownerId;
 	}
+	/*
+	public String getOwnerName()
+	{
+		return ownerName;
+	}
+	
+	public void setOwnerName(String name)
+	{
+		ownerName = name;
+	}*/
 	
 	public String getName()
 	{

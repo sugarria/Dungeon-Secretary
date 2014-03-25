@@ -213,7 +213,7 @@ public class MainActivity extends Activity implements OnClickListener,
 				String personGooglePlusProfile = currentPerson.getUrl();
 				String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
 
-				Log.e(TAG, "Name: " + personName + ", plusProfile: "
+				Log.i(TAG, "Name: " + personName + ", plusProfile: "
 						+ personGooglePlusProfile + ", email: " + email
 						+ ", Image: " + personPhotoUrl);
 
@@ -256,7 +256,7 @@ public class MainActivity extends Activity implements OnClickListener,
 	 * */
 	@Override
 	public void onClick(View v) {
-		Log.e("Error", "ID: " + v.getId());
+		Log.i(TAG, "ID: " + v.getId());
 		switch (v.getId()) {
 		case R.id.btn_sign_in:
 			// Signin button clicked

@@ -17,6 +17,13 @@
         android:src="@drawable/ic_home"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"/>
+    
+    <Button
+        android:id="@+id/btn_add_character"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Add character"
+        android:layout_marginBottom="10dp"/>
      
  
 </RelativeLayout>
