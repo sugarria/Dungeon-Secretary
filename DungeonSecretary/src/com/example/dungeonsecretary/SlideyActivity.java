@@ -54,11 +54,14 @@ public class SlideyActivity extends FragmentActivity {
 	private CharacterDrawerListAdapter charLeftAdapter;
 	
 	//right slide menu items
-	private String[] rightNavMenuTitles;
-	private TypedArray rightNavMenuIcons;
+	private List<CharacterData> sharedCharacters;
+	private ArrayList<CharacterDrawerItem> rightCharDrawerItems;
+	private CharacterDrawerListAdapter charRightAdapter;
+	//private String[] rightNavMenuTitles;
+	//private TypedArray rightNavMenuIcons;
 	
-	private ArrayList<NavDrawerItem> rightNavDrawerItems;
-	private NavDrawerListAdapter rightAdapter;
+	//private ArrayList<NavDrawerItem> rightNavDrawerItems;
+	//private NavDrawerListAdapter rightAdapter;
 	
 	//If you need to manually reset the database and build it from scratch 
 	//when the activity starts set this to true.
@@ -75,6 +78,39 @@ public class SlideyActivity extends FragmentActivity {
 
 		charLeftAdapter = new CharacterDrawerListAdapter(getApplicationContext(), leftCharDrawerItems);
         leftMDrawerList.setAdapter(charLeftAdapter);
+	}
+	
+	private void fillSharedCharacters()
+	{
+		// get friends 
+		sharedCharacters = dbData.getAllCharacters();
+		rightCharDrawerItems = new ArrayList<CharacterDrawerItem>();
+		
+		// prune unshared files
+		List<CharacterData> temp = new ArrayList<CharacterData>();
+		
+		for(int i = 0; i < sharedCharacters.size(); i++)
+		{
+			CharacterData tempChar = sharedCharacters.get(i);
+			if (!tempChar.getShared() /*|| sharedCharacters.get(i).getOwnerName() == "Shawn"*/)  // using this for now to test
+			{
+				temp.add(tempChar);
+			}			
+		}
+		
+		for (int i = 0; i < temp.size(); i++)
+		{
+			sharedCharacters.remove(temp.get(i));
+		}
+		
+		// add characters to the list
+		for (int i = 0; i < sharedCharacters.size(); i++)
+		{
+			rightCharDrawerItems.add(new CharacterDrawerItem(sharedCharacters.get(i), "User that isn't me")); // there's no way to look up the user's name if you only have the CharacterData object. you can only get user by the google account, and CharacterData only stores the user id.
+		}
+		
+		charRightAdapter = new CharacterDrawerListAdapter(getApplicationContext(), rightCharDrawerItems);
+		rightMDrawerList.setAdapter(charRightAdapter);
 	}
 	
 	private void setupLeftDrawer()
@@ -109,39 +145,9 @@ public class SlideyActivity extends FragmentActivity {
 	
 	private void setupRightDrawer()
 	{
-		//load slide menu items
-		rightNavMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
-		
-		//nav drawer icons from resources
-		rightNavMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
-		
 		rightMDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         rightMDrawerList = (ListView) findViewById(R.id.list_slidermenu_right);
- 
-		rightNavDrawerItems = new ArrayList<NavDrawerItem>();
-		
-		//adding nav drawer items to array
-		//home
-		//rightNavDrawerItems.add(new NavDrawerItem(rightNavMenuTitles[0], rightNavMenuIcons.getResourceId(0, -1)));
-		// Find People
-        //rightNavDrawerItems.add(new NavDrawerItem(rightNavMenuTitles[1], rightNavMenuIcons.getResourceId(1, -1)));
-        // Photos
-        //rightNavDrawerItems.add(new NavDrawerItem(rightNavMenuTitles[2], rightNavMenuIcons.getResourceId(2, -1)));
-        // Communities, Will add a counter here
-        rightNavDrawerItems.add(new NavDrawerItem(rightNavMenuTitles[3], rightNavMenuIcons.getResourceId(3, -1), true, "22"));
-        // Pages
-        rightNavDrawerItems.add(new NavDrawerItem(rightNavMenuTitles[4], rightNavMenuIcons.getResourceId(4, -1)));
-        // What's hot, We  will add a counter here
-        rightNavDrawerItems.add(new NavDrawerItem(rightNavMenuTitles[5], rightNavMenuIcons.getResourceId(5, -1), true, "50+"));
-
-
-        // Recycle the typed array
-        rightNavMenuIcons.recycle();
- 
-        // setting the nav drawer list adapter
-        rightAdapter = new NavDrawerListAdapter(getApplicationContext(),
-                rightNavDrawerItems);
-        rightMDrawerList.setAdapter(rightAdapter);
+        fillSharedCharacters();
         
         rightMDrawerToggle = new ActionBarDrawerToggle(this, rightMDrawerLayout,
                 R.drawable.ic_drawer, //nav menu toggle icon
@@ -155,6 +161,7 @@ public class SlideyActivity extends FragmentActivity {
             }
  
             public void onDrawerOpened(View drawerView) {
+            	fillSharedCharacters();
                 getActionBar().setTitle(rightMDrawerTitle);
                 // calling onPrepareOptionsMenu() to hide action bar icons
                 invalidateOptionsMenu();
@@ -181,36 +188,58 @@ public class SlideyActivity extends FragmentActivity {
 		CharacterData test2 = new CharacterData();
 		CharacterData test3 = new CharacterData();
 		CharacterData test4 = new CharacterData();
+		CharacterData test5 = new CharacterData();
+		CharacterData test6 = new CharacterData();
+		
 		
 		test1.setName("Character1");
 		test2.setName("Character2");
 		test3.setName("Character3");
 		test4.setName("Character4");
+		test5.setName("Character5");
+		test6.setName("Character6");
 				
 		test1.setOwnerId(user.getId());
 		test2.setOwnerId(user2.getId());
 		test3.setOwnerId(user2.getId());
-		test4.setOwnerId(user.getId());
-		
+		test4.setOwnerId(user2.getId());
+		test5.setOwnerId(user.getId());
+		test6.setOwnerId(user2.getId());
+		/*
+		test1.setOwnerName(user.getOwnerName());
+		test2.setOwnerName(user2.getOwnerName());
+		test3.setOwnerName(user2.getOwnerName());
+		test4.setOwnerName(user2.getOwnerName());
+		test5.setOwnerName(user.getOwnerName());
+		test6.setOwnerName(user2.getOwnerName());
+		 */
 		test1.setSystem("D&D 3.5");
 		test2.setSystem("Pathfinder");
 		test3.setSystem("FATE Core");
-		test4.setSystem("D&D 3.5");
+		test4.setSystem("D&D 4e");
+		test5.setSystem("D&D 3.5");
+		test6.setSystem("D&D 3.5");
 
 		test1.setPublic(false);
 		test2.setPublic(false);
-		test3.setPublic(true);
+		test3.setPublic(false);
 		test4.setPublic(true);
+		test5.setPublic(true);
+		test6.setPublic(true);
 
 		test1.setShared(true);
 		test2.setShared(false);
 		test3.setShared(true);
-		test4.setShared(true);
+		test4.setShared(false);
+		test5.setShared(true);
+		test6.setShared(true);
 
 		dbData.InsertCharacter(test1);
 		dbData.InsertCharacter(test2);
 		dbData.InsertCharacter(test3);
 		dbData.InsertCharacter(test4);
+		dbData.InsertCharacter(test5);
+		dbData.InsertCharacter(test6);
 	}
 	
 	@Override
