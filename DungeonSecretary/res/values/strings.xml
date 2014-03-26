@@ -11,8 +11,8 @@
 
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>
-     <string name="plus">+</string>
-       <string name="save_stat">Save</string>
+    <string name="plus">+</string>
+    <string name="save_stat">Save</string>
     
     <!-- Text View For Stat Page -->
     <string name="stat_list_page">Statistic List</string>
