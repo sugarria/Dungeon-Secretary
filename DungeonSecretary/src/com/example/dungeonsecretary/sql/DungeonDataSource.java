@@ -237,12 +237,12 @@ public class DungeonDataSource {
 		return foundStat;
 	}
 	
-	private List<StatData> getAllStatsForCharacter(long characterId)
+	public List<StatData> getAllStatsForCharacter(long characterId)
 	{
 		List<StatData> stats = new ArrayList<StatData>();
 		String where = MySQLiteHelper.STATS_COLUMN_CHARACTER_ID + " = " + characterId;
 		Cursor cursor = database.query(MySQLiteHelper.TABLE_STATS, 
-				characterColumns, where, null, null, null, null);
+				statColumns, where, null, null, null, null);
 		cursor.moveToFirst();
 		while(!cursor.isAfterLast()) {
 			StatData stat = StatAtCursor(cursor);

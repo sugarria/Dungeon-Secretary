@@ -248,15 +248,15 @@ containing a value of this type.
         public static final int list_selector=0x7f020027;
     }
     public static final class id {
-        public static final int action_settings=0x7f05002d;
+        public static final int action_settings=0x7f05002e;
         public static final int addChildButton=0x7f05002a;
         public static final int addStatisticTextView=0x7f05001a;
         public static final int btn_add_character=0x7f050014;
         public static final int btn_next_view=0x7f05000c;
+        public static final int btn_plus=0x7f05002c;
         public static final int btn_revoke_access=0x7f05000b;
         public static final int btn_sign_in=0x7f050009;
         public static final int btn_sign_out=0x7f05000a;
-        public static final int button1=0x7f05002c;
         public static final int character_name=0x7f05000d;
         public static final int contactsTitleTextView=0x7f05002b;
         public static final int counter=0x7f050012;
@@ -270,6 +270,7 @@ containing a value of this type.
         public static final int imgProfilePic=0x7f050006;
         public static final int list_slidermenu_left=0x7f050017;
         public static final int list_slidermenu_right=0x7f050018;
+        public static final int list_stat_view=0x7f05002d;
         public static final int llProfile=0x7f050005;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
@@ -305,9 +306,11 @@ containing a value of this type.
         public static final int fragment_home=0x7f030003;
         public static final int slidey_layout=0x7f030004;
         public static final int stat_add=0x7f030005;
-        public static final int stat_edit=0x7f030006;
-        public static final int stat_entry=0x7f030007;
-        public static final int stat_list_page=0x7f030008;
+        public static final int stat_add_child=0x7f030006;
+        public static final int stat_edit=0x7f030007;
+        public static final int stat_edit_child=0x7f030008;
+        public static final int stat_entry=0x7f030009;
+        public static final int stat_list_page=0x7f03000a;
     }
     public static final class menu {
         public static final int dungeon_secretary=0x7f0b0000;

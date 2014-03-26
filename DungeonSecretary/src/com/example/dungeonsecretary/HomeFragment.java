@@ -3,7 +3,7 @@ package com.example.dungeonsecretary;
 import com.example.dungeonsecretary.model.CharacterData;
 import com.example.dungeonsecretary.sql.DungeonDataSource;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;

@@ -15,14 +15,16 @@ import com.example.dungeonsecretary.sql.MySQLiteHelper;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.ListFragment;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
@@ -31,7 +33,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-public class SlideyActivity extends Activity {
+
+public class SlideyActivity extends FragmentActivity {
 
 	private DrawerLayout leftMDrawerLayout, rightMDrawerLayout;
 	private ListView leftMDrawerList, rightMDrawerList;
@@ -257,18 +260,26 @@ public class SlideyActivity extends Activity {
 	
 	private void displayView(int position)
 	{
-		Fragment fragment = null;
-		switch (position) {
-		case 0:
-			fragment = new HomeFragment();
-			break;
-		default:
-				break;
-		}
+			Fragment fragment = new StatListPageActivity();
+			Bundle bundle = new Bundle();
+			
+			long charId = allCharacters.get(position).getId();
+			
+			bundle.putLong("charId",charId);
+			
+			fragment.setArguments(bundle);
+		
+			if(position == -1)
+			{
+				fragment = new HomeFragment();
+			}
+		// Signals an intention to do something
+		// getApplication() returns the application that owns
+		// this activity
 		
 		if (fragment != null)
 		{
-			FragmentManager fragmentManager = getFragmentManager();
+			FragmentManager fragmentManager = getSupportFragmentManager();
 			fragmentManager.beginTransaction().replace(R.id.frame_container,  fragment).commit();
 			//update selected item and title, then close the drawer
 			leftMDrawerList.setItemChecked(position, true);
@@ -279,6 +290,8 @@ public class SlideyActivity extends Activity {
 		{
 			Log.e("MainActivity", "Error in creating fragment");
 		}
+		
+
 	}
 		
 	

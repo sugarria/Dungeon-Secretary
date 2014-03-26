@@ -4,7 +4,7 @@ import java.util.List;
 
 public class StatData {
 	private long id;
-	private long characterId;
+	private static long characterId;
 	private String name;
 	
 	private String type;

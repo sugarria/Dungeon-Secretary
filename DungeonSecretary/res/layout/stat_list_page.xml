@@ -21,9 +21,9 @@
             android:layout_weight="1"/>
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/btn_plus"
             android:background="#444444"
-            android:onClick="showAddContact"
+            android:onClick="showAddStat"
             android:text="@string/plus"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
@@ -33,7 +33,7 @@
         android:layout_width="match_parent"
 	    android:layout_height="wrap_content" >
     <ListView
-         android:id="@android:id/list"
+         android:id="@+id/list_stat_view"
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
          android:layout_weight="1">
