@@ -248,20 +248,22 @@ containing a value of this type.
         public static final int list_selector=0x7f020027;
     }
     public static final class id {
-        public static final int action_settings=0x7f05002b;
-        public static final int addButton=0x7f050024;
-        public static final int addChildButton=0x7f050028;
-        public static final int addContactTextView=0x7f05001a;
+        public static final int action_settings=0x7f05002d;
+        public static final int addChildButton=0x7f05002a;
+        public static final int addStatisticTextView=0x7f05001a;
         public static final int btn_add_character=0x7f050014;
         public static final int btn_next_view=0x7f05000c;
         public static final int btn_revoke_access=0x7f05000b;
         public static final int btn_sign_in=0x7f050009;
         public static final int btn_sign_out=0x7f05000a;
-        public static final int button1=0x7f05002a;
+        public static final int button1=0x7f05002c;
         public static final int character_name=0x7f05000d;
-        public static final int contactsTitleTextView=0x7f050029;
+        public static final int contactsTitleTextView=0x7f05002b;
         public static final int counter=0x7f050012;
+        public static final int deleteButtonStatDelete=0x7f050028;
         public static final int drawer_layout=0x7f050015;
+        public static final int editButtonStatEdit=0x7f050027;
+        public static final int editStatisticTitleTextView=0x7f050026;
         public static final int frame_container=0x7f050016;
         public static final int hybrid=0x7f050004;
         public static final int icon=0x7f050010;
@@ -273,20 +275,20 @@ containing a value of this type.
         public static final int normal=0x7f050001;
         public static final int owner_name=0x7f05000e;
         public static final int satellite=0x7f050002;
-        public static final int statId=0x7f050025;
-        public static final int statName=0x7f050026;
-        public static final int statValue=0x7f050027;
-        public static final int stat_name_edit_text=0x7f05001d;
-        public static final int stat_name_text_view=0x7f05001c;
-        public static final int stat_type_edit_text=0x7f050023;
-        public static final int stat_type_text_view=0x7f050022;
-        public static final int stat_value_edit_text=0x7f050020;
-        public static final int stat_value_text_view=0x7f05001f;
+        public static final int saveButton=0x7f050025;
+        public static final int statId=0x7f050029;
+        public static final int statName=0x7f05001d;
+        public static final int statNameTextView=0x7f05001c;
+        public static final int statType=0x7f050023;
+        public static final int statTypeTextView=0x7f050022;
+        public static final int statValue=0x7f050020;
+        public static final int statValueTextView=0x7f05001f;
         public static final int system=0x7f05000f;
         public static final int tableRow1=0x7f050019;
         public static final int tableRow2=0x7f05001b;
         public static final int tableRow3=0x7f05001e;
         public static final int tableRow4=0x7f050021;
+        public static final int tableRow5=0x7f050024;
         public static final int terrain=0x7f050003;
         public static final int title=0x7f050011;
         public static final int txtEmail=0x7f050008;
@@ -313,7 +315,7 @@ containing a value of this type.
     }
     public static final class string {
         public static final int action_settings=0x7f06001b;
-        public static final int add_stat=0x7f060024;
+        public static final int add_stat=0x7f060026;
         public static final int app_name=0x7f06001a;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 
@@ -416,17 +418,20 @@ containing a value of this type.
         public static final int common_signin_button_text_long=0x7f060013;
         /**  Content Description 
          */
-        public static final int desc_list_item_icon=0x7f060028;
+        public static final int desc_list_item_icon=0x7f06002b;
         public static final int drawer_close=0x7f060020;
         public static final int drawer_open=0x7f06001f;
+        public static final int edit_stat=0x7f060027;
         public static final int plus=0x7f060021;
-        public static final int save_stat=0x7f060022;
+        public static final int stat_delete=0x7f060024;
+        public static final int stat_edit=0x7f060023;
         /**  Text View For Stat Page 
          */
-        public static final int stat_list_page=0x7f060023;
-        public static final int stat_name=0x7f060025;
-        public static final int stat_type=0x7f060027;
-        public static final int stat_value=0x7f060026;
+        public static final int stat_list_page=0x7f060025;
+        public static final int stat_name=0x7f060028;
+        public static final int stat_save=0x7f060022;
+        public static final int stat_type=0x7f06002a;
+        public static final int stat_value=0x7f060029;
     }
     public static final class style {
         /** 

@@ -10,7 +10,7 @@
         android:background="#000000" >
 
         <TextView
-            android:id="@+id/addContactTextView"
+            android:id="@+id/addStatisticTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/padding_5dp"
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/stat_name_text_view"
+            android:id="@+id/statNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -33,7 +33,7 @@
             android:text="@string/stat_name" />
 
         <EditText
-            android:id="@+id/stat_name_edit_text"
+            android:id="@+id/statName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/stat_value_text_view"
+            android:id="@+id/statValueTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -59,7 +59,7 @@
             android:text="@string/stat_value" />
 
         <EditText
-            android:id="@+id/stat_value_edit_text"
+            android:id="@+id/statValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -67,15 +67,15 @@
             android:inputType="textPersonName"
             android:paddingRight="@dimen/padding_5dp" >
         </EditText>
-    </TableRow>
+    </TableRow> 
     
-     <TableRow
+    <TableRow
         android:id="@+id/tableRow4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/stat_type_text_view"
+            android:id="@+id/statTypeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -83,7 +83,7 @@
             android:text="@string/stat_type" />
 
         <EditText
-            android:id="@+id/stat_type_edit_text"
+            android:id="@+id/statType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -91,24 +91,24 @@
             android:inputType="textPersonName"
             android:paddingRight="@dimen/padding_5dp" >
         </EditText>
-    </TableRow>
-
+    </TableRow> 
     
-    <TableRow
-        android:id="@+id/tableRow4"
+
+     <TableRow
+        android:id="@+id/tableRow5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
         <Button
-            android:id="@+id/addButton"
+            android:id="@+id/saveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginLeft="70dp"
-            android:layout_marginRight="70dp"
+            android:layout_marginLeft="100dp"
+            android:layout_marginRight="100dp"
             android:layout_marginTop="30dp"
-            android:onClick="addNewContact"
-            android:text="@string/save_stat" />
+            android:onClick="addNewStat"
+            android:text="@string/stat_save" />
     </TableRow>
 
 </TableLayout>
