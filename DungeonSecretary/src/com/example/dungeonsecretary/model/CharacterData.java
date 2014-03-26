@@ -44,8 +44,8 @@ public class CharacterData {
 	public void setOwnerName(String name)
 	{
 		ownerName = name;
-	}*/
-	
+	}
+	*/
 	public String getName()
 	{
 		return characterName;
