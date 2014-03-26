@@ -59,7 +59,7 @@ public class SlideyActivity extends Activity {
 	
 	//If you need to manually reset the database and build it from scratch 
 	//when the activity starts set this to true.
-	private boolean DEV_resetDatabase = false;
+	private boolean DEV_resetDatabase = true;
 	
 	private void fillCharacterList()
 	{
@@ -93,6 +93,7 @@ public class SlideyActivity extends Activity {
  
             public void onDrawerOpened(View drawerView) {
             	fillCharacterList();
+            	Log.i("SlideyActivity","inonDrawerOpened");
                 getActionBar().setTitle(leftMDrawerTitle);
                 // calling onPrepareOptionsMenu() to hide action bar icons
                 invalidateOptionsMenu();
@@ -236,8 +237,8 @@ public class SlideyActivity extends Activity {
 		setupRightDrawer();
  
         // enabling action bar app icon and behaving it as toggle button
-        //getActionBar().setDisplayHomeAsUpEnabled(true);
-        //getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
  
 
         if (savedInstanceState == null) {
