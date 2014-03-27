@@ -147,14 +147,14 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 		newStat.setName("Stat 1");
 		newStat.setType("Text");
 		newStat.setValue("HELLO");
-		dbData.InsertStat(newStat);
+		dbData.insertStat(newStat);
 		
 		StatData newStat2 = new StatData();
 		newStat2.setCharacterId(charId);
 		newStat2.setName("Stat 2");
 		newStat2.setType("Number");
 		newStat2.setValue("15");
-		dbData.InsertStat(newStat2);
+		dbData.insertStat(newStat2);
 	}
 	
 	public void AddStat()
@@ -164,7 +164,7 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 		newStat.setName("Added stat" + statDataList.size());
 		newStat.setType("Text");
 		newStat.setValue("YORP");
-		dbData.InsertStat(newStat);
+		dbData.insertStat(newStat);
 	}
 
 }
