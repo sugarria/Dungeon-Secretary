@@ -65,7 +65,7 @@ public class SlideyActivity extends FragmentActivity {
 	
 	//If you need to manually reset the database and build it from scratch 
 	//when the activity starts set this to true.
-	private boolean DEV_resetDatabase = true;
+	private boolean DEV_resetDatabase = false;
 	
 	private void fillCharacterList()
 	{
@@ -313,7 +313,7 @@ public class SlideyActivity extends FragmentActivity {
 			//update selected item and title, then close the drawer
 			leftMDrawerList.setItemChecked(position, true);
 			leftMDrawerList.setSelection(position);
-			setTitle("Title Thing");
+			setTitle(allCharacters.get(position).getName());
 			leftMDrawerLayout.closeDrawer(leftMDrawerList);
 		} else 
 		{

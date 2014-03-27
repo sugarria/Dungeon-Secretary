@@ -66,8 +66,6 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 		
 		Bundle bundle = this.getArguments();
 		charId = bundle.getLong("charId");
-		SampleStats();
-
 		// Get the ListView and assign an event handler to it
 		Log.i("StatList", "before getListView");
 		statView = (ListView) rootView.findViewById(R.id.list_stat_view);
@@ -87,13 +85,18 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 				
 			}
 		}); 
+
+		fillStats();
+		if(statDataList.size() == 0){
+			SampleStats();	
+			fillStats();
+		}
 		Log.i("StatList", "before fillStat");
-		fillStat();
 		
 		return rootView;
 	}
 	
-	public void fillStat(){	
+	public void fillStats(){	
 		Log.i("StatList", "before getAllStats");
 		List<StatData> allStats =  dbData.getAllStatsForCharacter(charId);
 		Log.i("StatList", "before loop");
@@ -114,9 +117,11 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 			case R.id.btn_plus:
 	    	{
 	    		//pop up add window
-	    		FragmentManager fm = getActivity().getSupportFragmentManager();
-	    		EditStatDialog ed = new EditStatDialog();
-	    		ed.show(fm, "fragment_edit_stat");
+	    		//FragmentManager fm = getActivity().getSupportFragmentManager();
+	    		//EditStatDialog ed = new EditStatDialog();
+	    		//ed.show(fm, "fragment_edit_stat");
+	    		AddStat();
+	    		fillStats();
 	    		break;
 			}
 		}		
@@ -143,7 +148,7 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 	{
 		StatData newStat = new StatData();
 		newStat.setCharacterId(charId);
-		newStat.setName("Added stat");
+		newStat.setName("Added stat" + statDataList.size());
 		newStat.setType("Text");
 		newStat.setValue("YORP");
 		dbData.InsertStat(newStat);
