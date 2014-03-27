@@ -201,7 +201,7 @@ public class DungeonDataSource {
 				MySQLiteHelper.CHARACTERS_COLUMN_ID + " = " + id, null);		
 	}
 	
-	private void insertStat(StatData stat)
+	public void InsertStat(StatData stat)
 	{
 		//duplication/error checking
 		//get data from character and insert it

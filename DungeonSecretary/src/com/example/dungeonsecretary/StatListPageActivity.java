@@ -21,6 +21,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.content.Context;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -65,6 +66,7 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 		
 		Bundle bundle = this.getArguments();
 		charId = bundle.getLong("charId");
+		SampleStats();
 
 		// Get the ListView and assign an event handler to it
 		Log.i("StatList", "before getListView");
@@ -76,9 +78,9 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 				
 				// When an item is clicked get the TextView
 				// with a matching checkId
-				Log.i("StatList", "before findView(statId)");
-				statId = (TextView) view.findViewById(R.id.statId);
-				
+				//Log.i("StatList", "before findView(statId)");
+				//statId = (TextView) view.findViewById(R.id.statId);
+				AddStat();
 				
 				
 				// Calls for EditStat pop up window
@@ -87,7 +89,6 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 		}); 
 		Log.i("StatList", "before fillStat");
 		fillStat();
-		
 		
 		return rootView;
 	}
@@ -110,17 +111,42 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
-		case R.id.btn_plus:
-    	{
-    		//pop up add window
-    		break;
-		}
+			case R.id.btn_plus:
+	    	{
+	    		//pop up add window
+	    		FragmentManager fm = getActivity().getSupportFragmentManager();
+	    		EditStatDialog ed = new EditStatDialog();
+	    		ed.show(fm, "fragment_edit_stat");
+	    		break;
+			}
+		}		
+	}
 	
+	public void SampleStats()
+	{
+		StatData newStat = new StatData();
+		newStat.setCharacterId(charId);
+		newStat.setName("Stat 1");
+		newStat.setType("Text");
+		newStat.setValue("HELLO");
+		dbData.InsertStat(newStat);
 		
+		StatData newStat2 = new StatData();
+		newStat2.setCharacterId(charId);
+		newStat2.setName("Stat 2");
+		newStat2.setType("Number");
+		newStat2.setValue("15");
+		dbData.InsertStat(newStat2);
 	}
-		
+	
+	public void AddStat()
+	{
+		StatData newStat = new StatData();
+		newStat.setCharacterId(charId);
+		newStat.setName("Added stat");
+		newStat.setType("Text");
+		newStat.setValue("YORP");
+		dbData.InsertStat(newStat);
 	}
-		
-		
 
 }
