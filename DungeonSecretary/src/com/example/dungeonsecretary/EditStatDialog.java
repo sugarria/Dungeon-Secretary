@@ -12,6 +12,7 @@ import com.example.dungeonsecretary.StatListPageActivity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,6 +20,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
+import android.view.inputmethod.EditorInfo;
 
 
 public class EditStatDialog extends DialogFragment implements OnClickListener{
@@ -27,9 +31,17 @@ public class EditStatDialog extends DialogFragment implements OnClickListener{
 	DungeonDataSource dbData;
 	long charId;
 	
+	private StatListPageActivity parent;
+	
+	public void setParent(StatListPageActivity pa)
+	{
+		parent = pa;
+	}
 	
 	//private EditText input;
-	
+	public interface EditNameDialogListener {
+        void onFinishEditDialog();
+    }
 	 public EditStatDialog() {
 	        // Empty constructor required for DialogFragment
 	    }
@@ -46,6 +58,7 @@ public class EditStatDialog extends DialogFragment implements OnClickListener{
        Button btn_cancel= (Button) view.findViewById(R.id.btn_cancel);
        btn_save.setOnClickListener(this);
        btn_cancel.setOnClickListener(this);
+       
        //input = new EditText(getActivity());
 
         return view;
@@ -64,15 +77,18 @@ public class EditStatDialog extends DialogFragment implements OnClickListener{
     		newStat.setCharacterId(charId);
     		newStat.setType("Text");
     		newStat.setValue("20");
-    		
     		dbData.insertStat(newStat);
-    		dismiss();
+
+    		parent.onFinishEditDialog();
+    		
+    		this.dismiss();
     		
     		break;
 		}
 		case R.id.btn_cancel:
 		{
 			//do nothing
+			this.dismiss();
 			break;
 		}
 	
