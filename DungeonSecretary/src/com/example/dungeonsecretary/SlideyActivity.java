@@ -27,6 +27,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,7 +66,7 @@ public class SlideyActivity extends FragmentActivity {
 	
 	//If you need to manually reset the database and build it from scratch 
 	//when the activity starts set this to true.
-	private boolean DEV_resetDatabase = false;
+	private boolean DEV_resetDatabase = true;
 	
 	private void fillCharacterList()
 	{
@@ -73,7 +74,7 @@ public class SlideyActivity extends FragmentActivity {
 		leftCharDrawerItems = new ArrayList<CharacterDrawerItem>();
 		for(int i = 0; i < allCharacters.size(); i++)
 		{
-			leftCharDrawerItems.add(new CharacterDrawerItem(allCharacters.get(i), "Shawn"));
+			leftCharDrawerItems.add(new CharacterDrawerItem(allCharacters.get(i), dbData.getUser(allCharacters.get(i).getOwnerId()).getUserName()));
 		}
 
 		charLeftAdapter = new CharacterDrawerListAdapter(getApplicationContext(), leftCharDrawerItems);
@@ -174,72 +175,37 @@ public class SlideyActivity extends FragmentActivity {
 	
 	private void SampleDBEntries()
 	{
-		UserData user = new UserData();
-		user.setGoogleAccount("shawn@gmail.com");
-		user.setUserName("Shawn");		
-		dbData.InsertUser(user);
-
-		UserData user2 = new UserData();
-		user2.setGoogleAccount("otherUser@gmail.com");
-		user2.setUserName("User that isn't me");		
-		dbData.InsertUser(user2);
+		UserData user = dbData.getCurrentUser();
 
 		CharacterData test1 = new CharacterData();
 		CharacterData test2 = new CharacterData();
 		CharacterData test3 = new CharacterData();
-		CharacterData test4 = new CharacterData();
-		CharacterData test5 = new CharacterData();
-		CharacterData test6 = new CharacterData();
 		
 		
 		test1.setName("Character1");
 		test2.setName("Character2");
 		test3.setName("Character3");
-		test4.setName("Character4");
-		test5.setName("Character5");
-		test6.setName("Character6");
 				
 		test1.setOwnerId(user.getId());
-		test2.setOwnerId(user2.getId());
-		test3.setOwnerId(user2.getId());
-		test4.setOwnerId(user2.getId());
-		test5.setOwnerId(user.getId());
-		test6.setOwnerId(user2.getId());
-		/*
-		test1.setOwnerName(user.getOwnerName());
-		test2.setOwnerName(user2.getOwnerName());
-		test3.setOwnerName(user2.getOwnerName());
-		test4.setOwnerName(user2.getOwnerName());
-		test5.setOwnerName(user.getOwnerName());
-		test6.setOwnerName(user2.getOwnerName());
-		 */
+		test2.setOwnerId(user.getId());
+		test3.setOwnerId(user.getId());
+		
+		
 		test1.setSystem("D&D 3.5");
 		test2.setSystem("Pathfinder");
 		test3.setSystem("FATE Core");
-		test4.setSystem("D&D 4e");
-		test5.setSystem("D&D 3.5");
-		test6.setSystem("D&D 3.5");
 
 		test1.setPublic(false);
 		test2.setPublic(false);
 		test3.setPublic(false);
-		test4.setPublic(true);
-		test5.setPublic(true);
-		test6.setPublic(true);
 
 		test1.setShared(true);
 		test2.setShared(false);
 		test3.setShared(true);
-		test4.setShared(false);
-		test5.setShared(true);
-		test6.setShared(true);
 
-		dbData.InsertCharacter(test1);
-		dbData.InsertCharacter(test2);
-		dbData.InsertCharacter(test3);
-		dbData.InsertCharacter(test4);
-		dbData.InsertCharacter(test5);
-		dbData.InsertCharacter(test6);
+		dbData.insertCharacter(test1);
+		dbData.insertCharacter(test2);
+		dbData.insertCharacter(test3);
 	}
 	
 	@Override
@@ -251,13 +217,13 @@ public class SlideyActivity extends FragmentActivity {
 		mTitle = leftMDrawerTitle = rightMDrawerTitle= getTitle();
 		
 		dbData = DungeonDataSource.getInstance(getApplicationContext());
-		dbData.open();
-		if(DEV_resetDatabase)
+		//dbData.open();
+		/*if(DEV_resetDatabase)
 		{
 			dbData.resetDatabase();
 			dbData.close();
 			dbData.open();
-		}
+		}*/
 		allCharacters = dbData.getAllCharacters();
 		if(allCharacters.size() == 0)
 		{
@@ -275,7 +241,7 @@ public class SlideyActivity extends FragmentActivity {
 
         if (savedInstanceState == null) {
             // on first time display view for first nav item
-            displayView(0);
+            displayView(-1);
         }
     }
  
@@ -289,7 +255,15 @@ public class SlideyActivity extends FragmentActivity {
 	
 	private void displayView(int position)
 	{
-			Fragment fragment = new StatListPageActivity();
+		Fragment fragment;
+		if(position == -1)
+		{
+			fragment = new MainMenuFragment();
+			setTitle("Dungeon Secretary");
+		}
+		else
+		{
+			fragment = new StatListPageActivity();
 			Bundle bundle = new Bundle();
 			
 			long charId = allCharacters.get(position).getId();
@@ -297,11 +271,10 @@ public class SlideyActivity extends FragmentActivity {
 			bundle.putLong("charId",charId);
 			
 			fragment.setArguments(bundle);
+			setTitle(allCharacters.get(position).getName());
+		}
 		
-			if(position == -1)
-			{
-				fragment = new HomeFragment();
-			}
+			
 		// Signals an intention to do something
 		// getApplication() returns the application that owns
 		// this activity
@@ -313,11 +286,7 @@ public class SlideyActivity extends FragmentActivity {
 			//update selected item and title, then close the drawer
 			leftMDrawerList.setItemChecked(position, true);
 			leftMDrawerList.setSelection(position);
-			setTitle(allCharacters.get(position).getName());
 			leftMDrawerLayout.closeDrawer(leftMDrawerList);
-		} else 
-		{
-			Log.e("MainActivity", "Error in creating fragment");
 		}
 		
 
@@ -378,9 +347,17 @@ public class SlideyActivity extends FragmentActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggls
-        leftMDrawerToggle.onConfigurationChanged(newConfig);
-    
+        leftMDrawerToggle.onConfigurationChanged(newConfig);    
 	}
+    
+    public void openLeftDrawer()
+    {
+    	leftMDrawerLayout.openDrawer(Gravity.LEFT);
+    }
 
+    public void openRightDrawer()
+    {
+    	rightMDrawerLayout.openDrawer(Gravity.RIGHT);
+    }
 
 }

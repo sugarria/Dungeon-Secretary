@@ -46,7 +46,7 @@ public class HomeFragment extends Fragment implements OnClickListener{
 	    		cha.setPublic(false);
 	    		cha.setShared(false);
 	    		
-	    		dbData.InsertCharacter(cha);
+	    		dbData.insertCharacter(cha);
 	    		break;
     		}
     	

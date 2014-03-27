@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.dungeonsecretary.sql.DungeonDataSource;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
@@ -59,6 +60,10 @@ public class MainActivity extends Activity implements OnClickListener,
 	private TextView txtName, txtEmail;
 	private LinearLayout llProfileLayout;
 
+	//If you need to manually reset the database and build it from scratch 
+	//when the activity starts set this to true.
+	private boolean DEV_resetDatabase = true;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.i("Lifecycle", "on create....");
@@ -175,6 +180,21 @@ public class MainActivity extends Activity implements OnClickListener,
 
 		// Get user's information
 		getProfileInformation();
+
+		Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+		String personName = currentPerson.getDisplayName();
+		String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+		
+		DungeonDataSource dbData = DungeonDataSource.getInstance(this);
+		
+		if(DEV_resetDatabase)
+		{
+			dbData.resetDatabase();
+			dbData.close();
+			dbData.open();
+		}
+		
+		DungeonDataSource.getInstance(this).setCurrentUser(email, personName);
 
 		// Update the UI after signin
 		updateUI(true);

@@ -28,6 +28,7 @@ public class DungeonDataSource {
 		if(instance == null)
 		{
 			instance = new DungeonDataSource(context);
+			instance.open();
 		}
 		return instance;
 	}
@@ -48,6 +49,8 @@ public class DungeonDataSource {
 			MySQLiteHelper.STATS_COLUMN_CHARACTER_ID, MySQLiteHelper.STATS_COLUMN_NAME,
 			MySQLiteHelper.STATS_COLUMN_TYPE, MySQLiteHelper.STATS_COLUMN_VALUE};
 	
+	//The current logged in user
+	private UserData currentUser;
 	
 	
 	public void open() throws SQLException {
@@ -72,7 +75,7 @@ public class DungeonDataSource {
 	 * @param user
 	 * 		The user to insert into the database. 
 	 */
-	public void InsertUser(UserData user)
+	public void insertUser(UserData user)
 	{
 		//TODO Duplication/error checking		
 		//read values from the user
@@ -84,7 +87,7 @@ public class DungeonDataSource {
 		user.setId(insertId);
 	}
 	
-	public void UpdateUser(UserData user)
+	public void updateUser(UserData user)
 	{
 		ContentValues values = new ContentValues();
 		values.put(MySQLiteHelper.USERS_COLUMN_GOOGLE_ACCOUNT, user.getGoogleAccount());
@@ -95,11 +98,33 @@ public class DungeonDataSource {
 		
 	public UserData getUser(String gAccount) {
 		//string for the where clause to compare both google account and user name
-		String where = MySQLiteHelper.USERS_COLUMN_GOOGLE_ACCOUNT + " = " + gAccount;
+		String where = MySQLiteHelper.USERS_COLUMN_GOOGLE_ACCOUNT + " = '" + gAccount + "'";
 		Cursor cursor = database.query(MySQLiteHelper.TABLE_USERS, userColumns, 
 				where, null, null, null, null);
-		cursor.moveToFirst();
-		UserData foundUser = UserAtCursor(cursor);
+		UserData foundUser;
+		if(cursor.getCount() == 0)
+		{
+			foundUser = null;
+		} else {
+			cursor.moveToFirst();
+			foundUser = userAtCursor(cursor);
+		}
+		return foundUser;
+	}
+	
+	public UserData getUser(long userId) {
+		//string for the where clause to compare both google account and user name
+		String where = MySQLiteHelper.USERS_COLUMN_ID + " = " + userId;
+		Cursor cursor = database.query(MySQLiteHelper.TABLE_USERS, userColumns, 
+				where, null, null, null, null);
+		UserData foundUser;
+		if(cursor.getCount() == 0)
+		{
+			foundUser = null;
+		} else {
+			cursor.moveToFirst();
+			foundUser = userAtCursor(cursor);
+		}
 		return foundUser;
 	}
 	
@@ -113,9 +138,9 @@ public class DungeonDataSource {
 		List<UserData> users = new ArrayList<UserData>();
 		Cursor cursor = database.query(MySQLiteHelper.TABLE_USERS, 
 				userColumns, null, null, null, null, null);
-		cursor.moveToFirst();
+		cursor.moveToFirst();		
 		while(!cursor.isAfterLast()) {
-			UserData user = UserAtCursor(cursor);
+			UserData user = userAtCursor(cursor);
 			users.add(user);
 			cursor.moveToNext();
 		}
@@ -124,15 +149,21 @@ public class DungeonDataSource {
 		return users;
 	}
 	
-	private UserData UserAtCursor(Cursor cursor) {
+	private UserData userAtCursor(Cursor cursor) {
 		UserData user = new UserData();
+		if(cursor.isAfterLast())
+		{
+			user = null;
+		}else
+		{
 		user.setId(cursor.getLong(0));
 		user.setGoogleAccount(cursor.getString(1));
 		user.setUserName(cursor.getString(2));
+		}
 		return user;
 	}
 	
-	public void InsertCharacter(CharacterData character)
+	public void insertCharacter(CharacterData character)
 	{
 		//duplication/error checking
 		//get data from character and insert it
@@ -146,7 +177,7 @@ public class DungeonDataSource {
 		character.setId(insertId);
 	}
 
-	public void UpdateCharacter(CharacterData character)
+	public void updateCharacter(CharacterData character)
 	{
 		ContentValues values = new ContentValues();
 		values.put(MySQLiteHelper.CHARACTERS_COLUMN_OWNER_ID, character.getOwnerId());
@@ -161,11 +192,11 @@ public class DungeonDataSource {
 	public CharacterData getCharacter(long ownerId, String characterName) {
 		//string for the where clause to compare both owner name and character name
 		String where = MySQLiteHelper.CHARACTERS_COLUMN_OWNER_ID + " = " + ownerId
-				+ " AND " + MySQLiteHelper.CHARACTERS_COLUMN_NAME + " = " + characterName;
+				+ " AND " + MySQLiteHelper.CHARACTERS_COLUMN_NAME + " = '" + characterName + "'";
 		Cursor cursor = database.query(MySQLiteHelper.TABLE_CHARACTERS, characterColumns, 
 				where, null, null, null, null);
 		cursor.moveToFirst();
-		CharacterData foundCharacter = CharacterAtCursor(cursor);
+		CharacterData foundCharacter = characterAtCursor(cursor);
 		return foundCharacter;
 	}
 	
@@ -175,7 +206,7 @@ public class DungeonDataSource {
 				characterColumns, null, null, null, null, null);
 		cursor.moveToFirst();
 		while(!cursor.isAfterLast()) {
-			CharacterData chara = CharacterAtCursor(cursor);
+			CharacterData chara = characterAtCursor(cursor);
 			characters.add(chara);
 			cursor.moveToNext();
 		}
@@ -184,7 +215,7 @@ public class DungeonDataSource {
 		return characters;
 	}
 	
-	private CharacterData CharacterAtCursor(Cursor cursor) {
+	private CharacterData characterAtCursor(Cursor cursor) {
 		CharacterData character = new CharacterData();
 		character.setId(cursor.getLong(0));
 		character.setOwnerId(cursor.getLong(1));
@@ -201,7 +232,7 @@ public class DungeonDataSource {
 				MySQLiteHelper.CHARACTERS_COLUMN_ID + " = " + id, null);		
 	}
 	
-	public void InsertStat(StatData stat)
+	public void insertStat(StatData stat)
 	{
 		//duplication/error checking
 		//get data from character and insert it
@@ -214,7 +245,7 @@ public class DungeonDataSource {
 		stat.setId(insertId);
 	}
 	
-	public void UpdateStat(StatData stat)
+	public void updateStat(StatData stat)
 	{
 		ContentValues values = new ContentValues();
 		values.put(MySQLiteHelper.STATS_COLUMN_CHARACTER_ID, stat.getCharacterId());
@@ -229,7 +260,7 @@ public class DungeonDataSource {
 	{
 		//string for the where clause to compare both owner name and character name
 		String where = MySQLiteHelper.STATS_COLUMN_CHARACTER_ID + " = " + characterId
-				+ " AND " + MySQLiteHelper.STATS_COLUMN_NAME + " = " + statName;
+				+ " AND " + MySQLiteHelper.STATS_COLUMN_NAME + " = '" + statName + "'";
 		Cursor cursor = database.query(MySQLiteHelper.TABLE_STATS, statColumns, 
 				where, null, null, null, null);
 		cursor.moveToFirst();
@@ -269,5 +300,39 @@ public class DungeonDataSource {
 		stat.setValue(cursor.getString(4));
 		return stat;
 	}
+
+	public boolean checkForUser(String gAccount)
+	{
+		String where = MySQLiteHelper.USERS_COLUMN_GOOGLE_ACCOUNT + " = '" + gAccount + "'";
+		Cursor cursor = database.query(MySQLiteHelper.TABLE_USERS, userColumns, 
+				where, null, null, null, null);
+		if(cursor.getCount() == 0)
+		{
+			return false;
+		}
+		return true;
+	}
 	
+	public void setCurrentUser(String gAccount, String userName)
+	{
+		UserData user;
+		if(!checkForUser(gAccount))
+		{
+			user = new UserData();
+			user.setGoogleAccount(gAccount);
+			user.setUserName(userName);
+			insertUser(user);
+		}
+		else
+		{
+			user = getUser(gAccount);
+		}
+		currentUser = user;
+	}
+	
+	public UserData getCurrentUser()
+	{
+		return currentUser;
+	}
+
 }
