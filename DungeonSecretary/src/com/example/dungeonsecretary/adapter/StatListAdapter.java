@@ -17,6 +17,11 @@ public class StatListAdapter extends BaseAdapter {
      
     private Context context;
     private ArrayList<StatData> StatDataList;
+    private int finalValue;
+    String[] values;
+    String value1;
+    String operation;
+    String value2;
      
     public StatListAdapter(Context context, ArrayList<StatData> StatDataList){
         this.context = context;
@@ -52,7 +57,34 @@ public class StatListAdapter extends BaseAdapter {
                  
         statId.setText(String.valueOf(StatDataList.get(position).getId()));
         statName.setText(StatDataList.get(position).getName());
-        statValue.setText(StatDataList.get(position).getValue());
+        
+        //take the equation from the value
+        //parse the equation to calculate the value
+        if (StatDataList.get(position).getValue().contains("|")) {
+        	values= StatDataList.get(position).getValue().split("\\|");
+            value1 = values[0];
+            operation = values[1];
+            value2 = values[2];
+            
+            if(operation.equals("+")){
+            	finalValue = Integer.parseInt(value1) + Integer.parseInt(value2);
+            }
+            else if(operation.equals("-")){
+            	finalValue = Integer.parseInt(value1) - Integer.parseInt(value2);
+            }
+            else if(operation.equals("x")){
+            	finalValue = Integer.parseInt(value1) * Integer.parseInt(value2);
+            }
+            else if(operation.equals("/")){
+            	finalValue = Integer.parseInt(value1) / Integer.parseInt(value2);
+            }
+           
+            statValue.setText(Integer.toString(finalValue));
+        } else {
+        	statValue.setText(StatDataList.get(position).getValue());
+        }
+        
+       
              
          
       

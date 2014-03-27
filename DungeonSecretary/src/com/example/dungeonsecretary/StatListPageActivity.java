@@ -134,7 +134,7 @@ public class StatListPageActivity extends Fragment implements OnClickListener,Ed
 	    		/*
 	    		AddStat();
 	    		*/
-	    		fillStats();
+	    		
 	    		break;
 	    		
 			}
