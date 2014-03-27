@@ -12,39 +12,33 @@
            
 
         </FrameLayout>
-        
     
-    <!-- LinearLayout of left slider to display slider menu -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/left_drawer"
+    android:id="@+id/drawer_left"
+    android:layout_width="fill_parent" 
+    android:layout_height="match_parent"
+    android:layout_gravity="start" 
+    android:orientation="vertical" 
+    android:background="@color/list_background" >
+
+        <Button
+         android:id="@+id/btn_drawer_new_char"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:text="New Character" />
+	        
+	    <ListView
+        android:id="@+id/drawer_left_list"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_gravity="start"
-	    android:background="@color/list_background">	
-        
-	    <Button
-	        android:id="@+id/btn_slider_new_char"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_gravity="start"
-	        android:text="New Character"
-	        android:layout_marginBottom="10dp"/>
-	    
-	    <ListView
-	        android:id="@+id/list_slidermenu_left"
-	        android:layout_width="fill_parent"
-	        android:layout_height="match_parent"
-	        android:layout_gravity="start"
-	        android:layout_below="@id/btn_slider_new_char"
-	        android:choiceMode="singleChoice"
-	        android:divider="@color/list_divider"
-	        android:dividerHeight="1dp"       
-	        android:listSelector="@drawable/list_selector">     
-	        </ListView>    
-	        
-        </LinearLayout>
-        
+        android:layout_below="@id/btn_drawer_new_char"
+        android:choiceMode="singleChoice"
+        android:divider="@color/list_divider"
+        android:dividerHeight="1dp"       
+        android:listSelector="@drawable/list_selector">
+        </ListView>    
+    </LinearLayout>    
+    
     <ListView
         android:id="@+id/list_slidermenu_right"
         android:layout_width="fill_parent"
