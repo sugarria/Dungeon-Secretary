@@ -55,11 +55,11 @@ public class MainMenuFragment extends Fragment implements OnClickListener{
 		
 		View rootView = inflater.inflate(R.layout.fragment_main_menu, container, false);
 		
-		btnNewChar = (Button)rootView.findViewById(R.id.btn_new_char);
+		btnNewChar = (Button)rootView.findViewById(R.id.btn_main_new_char);
         btnNewChar.setOnClickListener(this);
-        btnLoadChar = (Button)rootView.findViewById(R.id.btn_load_char);
+        btnLoadChar = (Button)rootView.findViewById(R.id.btn_main_load_char);
         btnLoadChar.setOnClickListener(this);
-        btnShare = (Button)rootView.findViewById(R.id.btn_share);
+        btnShare = (Button)rootView.findViewById(R.id.btn_main_share);
         btnShare.setOnClickListener(this);
         
         parentActivity = (SlideyActivity)getActivity();
@@ -70,17 +70,17 @@ public class MainMenuFragment extends Fragment implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
-			case R.id.btn_new_char:
+			case R.id.btn_main_new_char:
 	    	{
 	    		parentActivity.openLeftDrawer();
 	    		break;
 			}
-			case R.id.btn_load_char:
+			case R.id.btn_main_load_char:
 	    	{
 	    		parentActivity.openLeftDrawer();
 	    		break;
 			}
-			case R.id.btn_share:
+			case R.id.btn_main_share:
 	    	{
 	    		parentActivity.openRightDrawer();
 	    		break;

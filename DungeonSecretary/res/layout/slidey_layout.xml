@@ -14,19 +14,36 @@
         </FrameLayout>
         
     
-    <!-- Listview to display slider menu -->
-    <ListView
-        android:id="@+id/list_slidermenu_left"
+    <!-- LinearLayout of left slider to display slider menu -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/left_drawer"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:layout_gravity="start"
-        android:choiceMode="singleChoice"
-        android:divider="@color/list_divider"
-        android:dividerHeight="1dp"       
-        android:listSelector="@drawable/list_selector"
-        android:background="@color/list_background">
+	    android:background="@color/list_background">	
         
-        </ListView>    
+	    <Button
+	        android:id="@+id/btn_slider_new_char"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="start"
+	        android:text="New Character"
+	        android:layout_marginBottom="10dp"/>
+	    
+	    <ListView
+	        android:id="@+id/list_slidermenu_left"
+	        android:layout_width="fill_parent"
+	        android:layout_height="match_parent"
+	        android:layout_gravity="start"
+	        android:layout_below="@id/btn_slider_new_char"
+	        android:choiceMode="singleChoice"
+	        android:divider="@color/list_divider"
+	        android:dividerHeight="1dp"       
+	        android:listSelector="@drawable/list_selector">     
+	        </ListView>    
+	        
+        </LinearLayout>
         
     <ListView
         android:id="@+id/list_slidermenu_right"

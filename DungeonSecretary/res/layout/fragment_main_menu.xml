@@ -12,26 +12,26 @@
         android:text="Home View"/-->
      
     <Button
-        android:id="@+id/btn_new_char"
+        android:id="@+id/btn_main_new_char"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="New Character"
         android:layout_marginBottom="10dp"/>
     
     <Button
-        android:id="@+id/btn_load_char"
+        android:id="@+id/btn_main_load_char"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/btn_new_char"
+        android:layout_below="@id/btn_main_new_char"
         android:text="Load Character"
         android:layout_marginBottom="10dp"/>
     
     <Button
-        android:id="@+id/btn_share"
+        android:id="@+id/btn_main_share"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Share"
-        android:layout_below="@id/btn_load_char"
+        android:layout_below="@id/btn_main_load_char"
         android:layout_marginBottom="10dp"/>
      
  

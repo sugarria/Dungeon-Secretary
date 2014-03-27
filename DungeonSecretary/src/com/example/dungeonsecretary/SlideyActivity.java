@@ -32,12 +32,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 
 public class SlideyActivity extends FragmentActivity {
 
 	private DrawerLayout leftMDrawerLayout, rightMDrawerLayout;
+	private LinearLayout leftDrawer;
 	private ListView leftMDrawerList, rightMDrawerList;
 	private ActionBarDrawerToggle leftMDrawerToggle, rightMDrawerToggle;
 	private DungeonDataSource dbData;
@@ -58,6 +61,8 @@ public class SlideyActivity extends FragmentActivity {
 	private List<CharacterData> sharedCharacters;
 	private ArrayList<CharacterDrawerItem> rightCharDrawerItems;
 	private CharacterDrawerListAdapter charRightAdapter;
+	
+	private Button btnNewChar;
 	//private String[] rightNavMenuTitles;
 	//private TypedArray rightNavMenuIcons;
 	
@@ -117,6 +122,7 @@ public class SlideyActivity extends FragmentActivity {
 	private void setupLeftDrawer()
 	{
 		leftMDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		leftDrawer = (LinearLayout) findViewById(R.id.left_drawer);
 		leftMDrawerList = (ListView) findViewById(R.id.list_slidermenu_left);
 		fillCharacterList();
         
@@ -286,7 +292,7 @@ public class SlideyActivity extends FragmentActivity {
 			//update selected item and title, then close the drawer
 			leftMDrawerList.setItemChecked(position, true);
 			leftMDrawerList.setSelection(position);
-			leftMDrawerLayout.closeDrawer(leftMDrawerList);
+			leftMDrawerLayout.closeDrawer(Gravity.LEFT);
 		}
 		
 
@@ -320,7 +326,7 @@ public class SlideyActivity extends FragmentActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // if nav drawer is opened, hide the action items
-        boolean drawerOpen = leftMDrawerLayout.isDrawerOpen(leftMDrawerList);
+        boolean drawerOpen = leftMDrawerLayout.isDrawerOpen(leftDrawer);
         menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -352,7 +358,7 @@ public class SlideyActivity extends FragmentActivity {
     
     public void openLeftDrawer()
     {
-    	leftMDrawerLayout.openDrawer(Gravity.LEFT);
+    	leftMDrawerLayout.openDrawer(leftDrawer);
     }
 
     public void openRightDrawer()
