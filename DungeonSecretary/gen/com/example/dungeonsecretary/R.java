@@ -248,54 +248,56 @@ containing a value of this type.
         public static final int list_selector=0x7f020027;
     }
     public static final class id {
-        public static final int action_settings=0x7f050031;
-        public static final int addChildButton=0x7f05002d;
-        public static final int addStatisticTextView=0x7f05001d;
-        public static final int btn_add_character=0x7f050017;
+        public static final int action_settings=0x7f050033;
+        public static final int addChildButton=0x7f05002f;
+        public static final int addStatisticTextView=0x7f05001f;
+        public static final int btn_add_character=0x7f050019;
+        public static final int btn_cancel=0x7f050016;
         public static final int btn_next_view=0x7f05000c;
-        public static final int btn_plus=0x7f05002f;
+        public static final int btn_plus=0x7f050031;
         public static final int btn_revoke_access=0x7f05000b;
+        public static final int btn_save=0x7f050017;
         public static final int btn_sign_in=0x7f050009;
         public static final int btn_sign_out=0x7f05000a;
         public static final int character_name=0x7f05000d;
-        public static final int contactsTitleTextView=0x7f05002e;
+        public static final int contactsTitleTextView=0x7f050030;
         public static final int counter=0x7f050012;
-        public static final int deleteButtonStatDelete=0x7f05002b;
-        public static final int drawer_layout=0x7f050018;
-        public static final int editButtonStatEdit=0x7f05002a;
-        public static final int editStatisticTitleTextView=0x7f050029;
+        public static final int deleteButtonStatDelete=0x7f05002d;
+        public static final int drawer_layout=0x7f05001a;
+        public static final int editButtonStatEdit=0x7f05002c;
+        public static final int editStatisticTitleTextView=0x7f05002b;
         public static final int edit_name=0x7f050013;
-        public static final int frame_container=0x7f050019;
+        public static final int frame_container=0x7f05001b;
         public static final int hybrid=0x7f050004;
         public static final int icon=0x7f050010;
         public static final int imgProfilePic=0x7f050006;
         public static final int lbl_your_name=0x7f050014;
-        public static final int list_slidermenu_left=0x7f05001a;
-        public static final int list_slidermenu_right=0x7f05001b;
-        public static final int list_stat_view=0x7f050030;
+        public static final int list_slidermenu_left=0x7f05001c;
+        public static final int list_slidermenu_right=0x7f05001d;
+        public static final int list_stat_view=0x7f050032;
         public static final int llProfile=0x7f050005;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
         public static final int owner_name=0x7f05000e;
         public static final int satellite=0x7f050002;
-        public static final int saveButton=0x7f050028;
-        public static final int statId=0x7f05002c;
-        public static final int statName=0x7f050020;
-        public static final int statNameTextView=0x7f05001f;
-        public static final int statType=0x7f050026;
-        public static final int statTypeTextView=0x7f050025;
-        public static final int statValue=0x7f050023;
-        public static final int statValueTextView=0x7f050022;
+        public static final int saveButton=0x7f05002a;
+        public static final int statId=0x7f05002e;
+        public static final int statName=0x7f050022;
+        public static final int statNameTextView=0x7f050021;
+        public static final int statType=0x7f050028;
+        public static final int statTypeTextView=0x7f050027;
+        public static final int statValue=0x7f050025;
+        public static final int statValueTextView=0x7f050024;
         public static final int system=0x7f05000f;
-        public static final int tableRow1=0x7f05001c;
-        public static final int tableRow2=0x7f05001e;
-        public static final int tableRow3=0x7f050021;
-        public static final int tableRow4=0x7f050024;
-        public static final int tableRow5=0x7f050027;
+        public static final int tableRow1=0x7f05001e;
+        public static final int tableRow2=0x7f050020;
+        public static final int tableRow3=0x7f050023;
+        public static final int tableRow4=0x7f050026;
+        public static final int tableRow5=0x7f050029;
         public static final int terrain=0x7f050003;
         public static final int title=0x7f050011;
         public static final int txtEmail=0x7f050008;
-        public static final int txtLabel=0x7f050016;
+        public static final int txtLabel=0x7f050018;
         public static final int txtName=0x7f050007;
         public static final int txt_your_name=0x7f050015;
     }
@@ -347,11 +349,13 @@ containing a value of this type.
         [CHAR LIMIT=70] 
          */
         public static final int auth_client_using_bad_version_title=0x7f060014;
+        public static final int btn_cancel=0x7f06002b;
         /**  Button text 
          */
         public static final int btn_logout_from_google=0x7f06001c;
         public static final int btn_next_view=0x7f06001e;
         public static final int btn_revoke_access=0x7f06001d;
+        public static final int btn_save=0x7f06002c;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -425,7 +429,7 @@ containing a value of this type.
         public static final int common_signin_button_text_long=0x7f060013;
         /**  Content Description 
          */
-        public static final int desc_list_item_icon=0x7f06002b;
+        public static final int desc_list_item_icon=0x7f06002d;
         public static final int drawer_close=0x7f060020;
         public static final int drawer_open=0x7f06001f;
         public static final int edit_stat=0x7f060027;
