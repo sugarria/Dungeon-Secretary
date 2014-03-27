@@ -92,7 +92,7 @@ public class StatListPageActivity extends Fragment implements OnClickListener,Ed
 				
 			}
 		}); 
-
+		//populate the stat
 		fillStats();
 		if(statDataList.size() == 0){
 			SampleStats();	
