@@ -13,6 +13,7 @@ import com.example.dungeonsecretary.adapter.StatListAdapter;
 import com.example.dungeonsecretary.model.CharacterData;
 import com.example.dungeonsecretary.model.CharacterDrawerItem;
 import com.example.dungeonsecretary.model.StatData;
+import com.example.dungeonsecretary.EditStatDialog.EditNameDialogListener;
 
 import com.example.dungeonsecretary.R;
 import android.app.AlertDialog;
@@ -43,7 +44,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.ListView;
 
-public class StatListPageActivity extends Fragment implements OnClickListener{
+public class StatListPageActivity extends Fragment implements OnClickListener,EditNameDialogListener{
 	Intent intent;
 	TextView statId;
 	Button btnPlus;
@@ -52,8 +53,7 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 	StatListAdapter statListAdapter;
 	ListView statView;
 	long charId;
-	final StatListPageActivity context = this;
-	private List<CharacterData> allCharacters;
+	StatData newStat;
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.ListFragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
 	 */
@@ -126,6 +126,7 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 	    		//pop up add window
 	    		FragmentManager fm = getActivity().getSupportFragmentManager();
 	    		EditStatDialog ed = new EditStatDialog();
+	    		ed.setParent(this);
 	    		Bundle bundle = new Bundle();	
 				bundle.putLong("charId",charId);
 				ed.setArguments(bundle);
@@ -166,5 +167,10 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 		newStat.setValue("YORP");
 		dbData.insertStat(newStat);
 	}
+	
+	public void onFinishEditDialog() {
+    	fillStats();
+		
+    }
 
 }
