@@ -15,15 +15,19 @@ import com.example.dungeonsecretary.model.CharacterDrawerItem;
 import com.example.dungeonsecretary.model.StatData;
 
 import com.example.dungeonsecretary.R;
+import android.app.AlertDialog;
 
 import android.os.Bundle;
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Context;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +37,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -47,6 +52,8 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 	StatListAdapter statListAdapter;
 	ListView statView;
 	long charId;
+	final StatListPageActivity context = this;
+	private List<CharacterData> allCharacters;
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.ListFragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
 	 */
@@ -115,14 +122,20 @@ public class StatListPageActivity extends Fragment implements OnClickListener{
 	public void onClick(View v) {
 		switch(v.getId()){
 			case R.id.btn_plus:
-	    	{
+	    	{   		
 	    		//pop up add window
-	    		//FragmentManager fm = getActivity().getSupportFragmentManager();
-	    		//EditStatDialog ed = new EditStatDialog();
-	    		//ed.show(fm, "fragment_edit_stat");
+	    		FragmentManager fm = getActivity().getSupportFragmentManager();
+	    		EditStatDialog ed = new EditStatDialog();
+	    		Bundle bundle = new Bundle();	
+				bundle.putLong("charId",charId);
+				ed.setArguments(bundle);
+	    		ed.show(fm, "fragment_edit_stat");
+	    		/*
 	    		AddStat();
+	    		*/
 	    		fillStats();
 	    		break;
+	    		
 			}
 		}		
 	}

@@ -24,6 +24,10 @@
     <string name="stat_value">Value</string>
     <string name="stat_type">Type</string>
     
+     <string name="btn_cancel">Cancel</string>
+     <string name="btn_save">Save</string>
+    
+    
     
     
     <!-- Nav Drawer Menu Items -->
