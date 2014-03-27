@@ -36,6 +36,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1.5"
 	        android:textSize="10sp" />
+	    
 	    <Spinner 
 	        android:id="@+id/txt_your_operation"
 	        android:layout_width="match_parent"
@@ -59,12 +60,13 @@
 	        android:text="="
 	        android:gravity="center"
 	        android:layout_weight="1.8" />
-   
+
 	    <EditText
 	        android:id="@+id/txt_your_value"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_weight="1.5"
+	        android:textSize="10sp"
+	        android:layout_weight="1.7"
 	         />
 
     </LinearLayout>

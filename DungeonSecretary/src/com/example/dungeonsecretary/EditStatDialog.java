@@ -11,6 +11,8 @@ import com.example.dungeonsecretary.StatListPageActivity;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -42,6 +44,7 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 	String statValue2;
 	String operationResult;
 	String statValue;
+	String statEquation;
 	
 	DungeonDataSource dbData;
 	long charId;
@@ -83,6 +86,9 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
        operation.setOnItemSelectedListener(this);      
        btn_save.setOnClickListener(this);
        btn_cancel.setOnClickListener(this);
+       
+       //mEditTextStatValue1.addTextChangedListener(updateStatValue);
+       //mEditTextStatValue1.addTextChangedListener(updateStatValue);
 
         return view;
     }
@@ -99,15 +105,19 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
     		statValue2 = mEditTextStatValue2.getText().toString();
     		if(operationResult.equals("+")){
     			value = Integer.parseInt(statValue1) + Integer.parseInt(statValue2);
+    			statEquation = statValue1 + "|" + "+" + "|" + statValue2;
     		}
     		else if(operationResult.equals("-")){
     			value = Integer.parseInt(statValue1) - Integer.parseInt(statValue2);
+    			statEquation = statValue1 + "|" + "-" + "|" + statValue2;
     			
     		} else if(operationResult.equals("x")){
     			value = Integer.parseInt(statValue1) * Integer.parseInt(statValue2);
+    			statEquation = statValue1 + "|" + "*" + "|" + statValue2;
     			
     		}else if(operationResult.equals("/")){
     			value = Integer.parseInt(statValue1) / Integer.parseInt(statValue2);
+    			statEquation = statValue1 + "|" + "/" + "|" + statValue2;
     			
     		}
     		mEditTextStatValue.setText(Integer.toString(value));
@@ -119,7 +129,7 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
     		newStat.setName(statName);
     		newStat.setCharacterId(charId);
     		newStat.setType(statType);
-    		newStat.setValue(statValue);
+    		newStat.setValue(statEquation);
     		dbData.insertStat(newStat);
 
     		parent.onFinishEditDialog();
@@ -150,7 +160,46 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 		
 	}
 	
-	 
+	private TextWatcher updateStatValue = new TextWatcher(){
+
+		@Override
+		public void afterTextChanged(Editable arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+				int arg3) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+				int arg3) {
+			
+			statValue1 = mEditTextStatValue1.getText().toString();
+    		statValue2 = mEditTextStatValue2.getText().toString();
+    		if(operationResult.equals("+")){
+    			value = Integer.parseInt(statValue1) ;
+    		}
+    		else if(operationResult.equals("-")){
+    			value = Integer.parseInt(statValue1) ;
+    			
+    		} else if(operationResult.equals("x")){
+    			value = Integer.parseInt(statValue1) ;
+    			
+    		}else if(operationResult.equals("/")){
+    			value = Integer.parseInt(statValue1);
+    			
+    		}
+    		mEditTextStatValue.setText(Integer.toString(value));
+			
+		}
+		
+	};
+	
 	   
 } 
 
