@@ -39,19 +39,44 @@
         </ListView>    
     </LinearLayout>    
     
-    <ListView
-        android:id="@+id/list_slidermenu_right"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_right"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="end"
+    android:orientation="vertical"
+    android:background="@color/list_background" >
+	    
+        <!--
+        <item
+        android:id="@+id/right_search_widget"
+        android:actionViewClass="android.widget.SearchView"
+        android:showAsAction="always"
+        android:title="Search" >
+        </item>
+        -->
+        
+        <SearchView
+        android:id="@+id/right_search_widget"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:iconifiedByDefault="true"
+        android:imeOptions="normal"
+        android:inputType="text"
+        android:queryHint="Search Public Characters" >
+        </SearchView>
+        
+        <ListView
+        android:id="@+id/drawer_right_list"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="end"
         android:choiceMode="singleChoice"
         android:divider="@color/list_divider"
         android:dividerHeight="1dp"       
-        android:listSelector="@drawable/list_selector"
-        android:background="@color/list_background">
-        
+        android:listSelector="@drawable/list_selector" >
         </ListView> 
-    
+    </LinearLayout>
+	    <!-- android:layout_below="@+id/right_search_widget" -->
 </android.support.v4.widget.DrawerLayout>
 
 <!-- 
