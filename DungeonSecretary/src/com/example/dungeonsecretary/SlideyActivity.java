@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.example.dungeonsecretary.adapter.CharacterDrawerListAdapter;
 import com.example.dungeonsecretary.adapter.NavDrawerListAdapter;
+import com.example.dungeonsecretary.interfaces.DialogListener;
 import com.example.dungeonsecretary.model.CharacterData;
 import com.example.dungeonsecretary.model.CharacterDrawerItem;
 import com.example.dungeonsecretary.model.NavDrawerItem;
@@ -31,18 +32,21 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 
-public class SlideyActivity extends FragmentActivity {
+public class SlideyActivity extends FragmentActivity implements OnClickListener, DialogListener{
 
 	private DrawerLayout leftMDrawerLayout, rightMDrawerLayout;
 	private ListView leftMDrawerList, rightMDrawerList;
 	private ActionBarDrawerToggle leftMDrawerToggle, rightMDrawerToggle;
 	private DungeonDataSource dbData;
 	private LinearLayout leftDrawer;
+	private Button btnNewChar;
 	
 	//nav drawer title
 	private CharSequence leftMDrawerTitle, rightMDrawerTitle;
@@ -243,6 +247,10 @@ public class SlideyActivity extends FragmentActivity {
             // on first time display view for first nav item
             displayView(-1);
         }
+        
+        btnNewChar = (Button)findViewById(R.id.btn_drawer_new_char);
+        btnNewChar.setOnClickListener(this);
+        
     }
  
 	private class SlideMenuClickListener implements ListView.OnItemClickListener
@@ -252,6 +260,8 @@ public class SlideyActivity extends FragmentActivity {
 			displayView(position);
 		}
 	}
+	
+	
 	
 	private void displayView(int position)
 	{
@@ -272,6 +282,8 @@ public class SlideyActivity extends FragmentActivity {
 			
 			fragment.setArguments(bundle);
 			setTitle(allCharacters.get(position).getName());
+			
+			dbData.setCurrentCharacter(charId);
 		}
 		
 			
@@ -359,5 +371,30 @@ public class SlideyActivity extends FragmentActivity {
     {
     	rightMDrawerLayout.openDrawer(Gravity.RIGHT);
     }
+    
+    @Override
+	public void onClick(View v) {
+		switch(v.getId()){
+			case R.id.btn_drawer_new_char:
+	    	{   		
+	    		//pop up add window
+	    		FragmentManager fm = getSupportFragmentManager();
+	    		NewCharacterDialog dlog = new NewCharacterDialog();
+	    		dlog.addDialogListener(this);
+	    		dlog.show(fm, "fragment_new_character");
+	    		break;
+	    		
+			}
+		}		
+	}
+    
+    public void onDialogFinish(int dialogId) {
+		switch(dialogId){
+			case R.id.dialog_new_character:
+			{
+				fillCharacterList();
+			}
+		}
+	}
 
 }

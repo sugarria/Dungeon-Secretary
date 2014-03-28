@@ -51,6 +51,8 @@ public class DungeonDataSource {
 	
 	//The current logged in user
 	private UserData currentUser;
+	//The currently selected character
+	private CharacterData currentCharacter;
 	
 	
 	public void open() throws SQLException {
@@ -200,6 +202,16 @@ public class DungeonDataSource {
 		return foundCharacter;
 	}
 	
+	public CharacterData getCharacter(long characterId) {
+		//string for the where clause to compare both owner name and character name
+		String where = MySQLiteHelper.CHARACTERS_COLUMN_ID + " = " + characterId;
+		Cursor cursor = database.query(MySQLiteHelper.TABLE_CHARACTERS, characterColumns, 
+				where, null, null, null, null);
+		cursor.moveToFirst();
+		CharacterData foundCharacter = characterAtCursor(cursor);
+		return foundCharacter;
+	}
+	
 	public List<CharacterData> getAllCharacters() {
 		List<CharacterData> characters = new ArrayList<CharacterData>();
 		Cursor cursor = database.query(MySQLiteHelper.TABLE_CHARACTERS, 
@@ -335,4 +347,15 @@ public class DungeonDataSource {
 		return currentUser;
 	}
 
+	public void setCurrentCharacter(long characterId)
+	{
+		currentCharacter = getCharacter(characterId);
+	}
+	
+	public CharacterData getCurrentCharacter()
+	{
+		return currentCharacter;
+	}
+	
+	
 }
