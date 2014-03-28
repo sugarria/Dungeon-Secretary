@@ -10,6 +10,7 @@ import com.example.dungeonsecretary.NewStat;
 import com.example.dungeonsecretary.EditStat;
 import com.example.dungeonsecretary.adapter.CharacterDrawerListAdapter;
 import com.example.dungeonsecretary.adapter.StatListAdapter;
+import com.example.dungeonsecretary.interfaces.DialogListener;
 import com.example.dungeonsecretary.model.CharacterData;
 import com.example.dungeonsecretary.model.CharacterDrawerItem;
 import com.example.dungeonsecretary.model.StatData;
@@ -44,7 +45,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.ListView;
 
-public class StatListPageActivity extends Fragment implements OnClickListener,EditNameDialogListener{
+public class StatListPageActivity extends Fragment implements OnClickListener, DialogListener{
 	Intent intent;
 	TextView statId;
 	Button btnPlus;
@@ -73,33 +74,12 @@ public class StatListPageActivity extends Fragment implements OnClickListener,Ed
 		
 		Bundle bundle = this.getArguments();
 		charId = bundle.getLong("charId");
-		// Get the ListView and assign an event handler to it
-		Log.i("StatList", "before getListView");
-		statView = (ListView) rootView.findViewById(R.id.list_stat_view);
-		Log.i("StatList", "before setOnItemClickListener");
-		statView.setOnItemClickListener(new OnItemClickListener() {
-			
-			public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-				
-				// When an item is clicked get the TextView
-				// with a matching checkId
-				//Log.i("StatList", "before findView(statId)");
-				//statId = (TextView) view.findViewById(R.id.statId);
-				AddStat();
-				
-				
-				// Calls for EditStat pop up window
-				
-			}
-		}); 
-		//populate the stat
-		fillStats();
-		if(statDataList.size() == 0){
-			SampleStats();	
-			fillStats();
-		}
-		Log.i("StatList", "before fillStat");
 		
+		// Get the ListView and assign an event handler to it
+		statView = (ListView) rootView.findViewById(R.id.list_stat_view);
+		statView.setOnItemClickListener(new StatListClickListener());
+		//populate the stats
+		fillStats();
 		return rootView;
 	}
 	
@@ -126,11 +106,11 @@ public class StatListPageActivity extends Fragment implements OnClickListener,Ed
 	    		//pop up add window
 	    		FragmentManager fm = getActivity().getSupportFragmentManager();
 	    		EditStatDialog ed = new EditStatDialog();
-	    		ed.setParent(this);
+	    		ed.addDialogListener(this);
 	    		Bundle bundle = new Bundle();	
 				bundle.putLong("charId",charId);
 				ed.setArguments(bundle);
-	    		ed.show(fm, "fragment_edit_stat");
+	    		ed.show(fm, "fragment_add_stat");
 	    		/*
 	    		AddStat();
 	    		*/
@@ -157,20 +137,29 @@ public class StatListPageActivity extends Fragment implements OnClickListener,Ed
 		newStat2.setValue("15");
 		dbData.insertStat(newStat2);
 	}
-	
-	public void AddStat()
-	{
-		StatData newStat = new StatData();
-		newStat.setCharacterId(charId);
-		newStat.setName("Added stat" + statDataList.size());
-		newStat.setType("Text");
-		newStat.setValue("YORP");
-		dbData.insertStat(newStat);
-	}
-	
+		
 	public void onFinishEditDialog() {
     	fillStats();
 		
     }
+	
+	private class StatListClickListener implements ListView.OnItemClickListener
+	{
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
+		{
+			//open the edit dialog here
+		}
+	}
+
+	@Override
+	public void onDialogFinish(int dialogId) {
+		switch(dialogId)
+		{
+			case R.id.dialog_add_stat:
+			{
+				fillStats();
+			}
+		}
+	}
 
 }

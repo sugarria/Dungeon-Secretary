@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.dungeonsecretary.adapter.StatListAdapter;
+import com.example.dungeonsecretary.interfaces.DialogListener;
 import com.example.dungeonsecretary.model.StatData;
 import com.example.dungeonsecretary.sql.DungeonDataSource;
 import com.example.dungeonsecretary.StatListPageActivity;
@@ -31,7 +32,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.view.inputmethod.EditorInfo;
 
 
-public class AddStatDialog extends DialogFragment implements OnClickListener, OnItemSelectedListener{
+public class AddStatDialog extends DialogFragment implements OnClickListener, OnItemSelectedListener {
 	private EditText mEditTextStatName;
 	private EditText mEditTextStatType;
 	private EditText mEditTextStatValue1;
@@ -49,18 +50,12 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
 	DungeonDataSource dbData;
 	long charId;
 	int value;
-	
-	private StatListPageActivity parent;
+
+	private List<DialogListener> listeners;
 	
 	public AddStatDialog() {
-        // Empty constructor required for DialogFragment
+	       listeners = new ArrayList<DialogListener>();
     }
-	
-	public void setParent(StatListPageActivity pa)
-	{
-		parent = pa;
-	}
-	
 	
 	public interface EditNameDialogListener {
         void onFinishEditDialog();
@@ -145,8 +140,7 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
     		newStat.setValue(statEquation);
     		dbData.insertStat(newStat);
 
-    		parent.onFinishEditDialog();
-    		
+    		callDialogListeners();
     		this.dismiss();
     		
     		break;
@@ -247,7 +241,20 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
 	        	
 	        }
 	}
-	   
+	   	
+
+	private void callDialogListeners()
+	{
+		for(int i = 0; i < listeners.size(); i++)
+		{
+			listeners.get(i).onDialogFinish(R.id.dialog_new_character);
+		}
+	}
+	
+	public void addDialogListener(DialogListener dl)
+	{
+		listeners.add(dl);
+	}
 } 
 
    
