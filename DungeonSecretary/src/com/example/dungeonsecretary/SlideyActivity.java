@@ -16,6 +16,7 @@ import com.example.dungeonsecretary.sql.MySQLiteHelper;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.SearchManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
@@ -45,7 +46,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 	private ListView leftMDrawerList, rightMDrawerList;
 	private ActionBarDrawerToggle leftMDrawerToggle, rightMDrawerToggle;
 	private DungeonDataSource dbData;
-	private LinearLayout leftDrawer;
+	private LinearLayout leftDrawer, rightDrawer;
 	private Button btnNewChar;
 	
 	//nav drawer title
@@ -62,14 +63,10 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 	
 	//right slide menu items
 	private List<CharacterData> sharedCharacters;
-	private ArrayList<CharacterDrawerItem> rightCharDrawerItems;
+	private ArrayList<CharacterDrawerItem> rightCharDrawerItems, rightSearchResult;
 	private CharacterDrawerListAdapter charRightAdapter;
-	//private String[] rightNavMenuTitles;
-	//private TypedArray rightNavMenuIcons;
-	
-	//private ArrayList<NavDrawerItem> rightNavDrawerItems;
-	//private NavDrawerListAdapter rightAdapter;
-	
+	private boolean searching;
+	private String query;
 	
 	private void fillCharacterList()
 	{
@@ -86,22 +83,37 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 	
 	private void fillSharedCharacters()
 	{
-		// get friends 
 		sharedCharacters = dbData.getAllCharacters();
 		rightCharDrawerItems = new ArrayList<CharacterDrawerItem>();
-		
-		// prune unshared files
+
 		List<CharacterData> temp = new ArrayList<CharacterData>();
-		
-		for(int i = 0; i < sharedCharacters.size(); i++)
+		if(searching)
 		{
-			CharacterData tempChar = sharedCharacters.get(i);
-			if (!tempChar.getShared() /*|| sharedCharacters.get(i).getOwnerName() == "Shawn"*/)  // using this for now to test
+			// prune non-public files
+			for(int i = 0; i < sharedCharacters.size(); i++)
 			{
-				temp.add(tempChar);
-			}			
+				CharacterData tempChar = sharedCharacters.get(i);
+				if (!tempChar.getPublic() || tempChar.getName() != query)
+				{
+					temp.add(tempChar);
+				}			
+			}
 		}
-		
+		else
+		{
+			// get friends (will use this later to only get shared files from friends)
+			
+			
+			// prune unshared files
+			for(int i = 0; i < sharedCharacters.size(); i++)
+			{
+				CharacterData tempChar = sharedCharacters.get(i);
+				if (!tempChar.getShared() || dbData.getCurrentUser().getId() == tempChar.getOwnerId())
+				{
+					temp.add(tempChar);
+				}			
+			}
+		}
 		for (int i = 0; i < temp.size(); i++)
 		{
 			sharedCharacters.remove(temp.get(i));
@@ -110,7 +122,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 		// add characters to the list
 		for (int i = 0; i < sharedCharacters.size(); i++)
 		{
-			rightCharDrawerItems.add(new CharacterDrawerItem(sharedCharacters.get(i), "User that isn't me")); // there's no way to look up the user's name if you only have the CharacterData object. you can only get user by the google account, and CharacterData only stores the user id.
+			rightCharDrawerItems.add(new CharacterDrawerItem(sharedCharacters.get(i), dbData.getUser(sharedCharacters.get(i).getOwnerId()).getUserName())); // there's no way to look up the user's name if you only have the CharacterData object. you can only get user by the google account, and CharacterData only stores the user id.
 		}
 		
 		charRightAdapter = new CharacterDrawerListAdapter(getApplicationContext(), rightCharDrawerItems);
@@ -151,7 +163,8 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 	private void setupRightDrawer()
 	{
 		rightMDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        rightMDrawerList = (ListView) findViewById(R.id.list_slidermenu_right);
+        rightMDrawerList = (ListView) findViewById(R.id.drawer_right_list);
+        rightDrawer = (LinearLayout) findViewById(R.id.drawer_right);
         fillSharedCharacters();
         
         rightMDrawerToggle = new ActionBarDrawerToggle(this, rightMDrawerLayout,
@@ -251,6 +264,17 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         btnNewChar = (Button)findViewById(R.id.btn_drawer_new_char);
         btnNewChar.setOnClickListener(this);
         
+        // handle search intent
+        Intent intent = getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction()))
+        {
+        	query = intent.getStringExtra(SearchManager.QUERY);
+        	searching = true;
+        }
+        else
+        {
+        	searching = false;
+        }
     }
  
 	private class SlideMenuClickListener implements ListView.OnItemClickListener
@@ -260,8 +284,6 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 			displayView(position);
 		}
 	}
-	
-	
 	
 	private void displayView(int position)
 	{
