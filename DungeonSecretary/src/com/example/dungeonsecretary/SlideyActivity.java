@@ -162,6 +162,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 	
 	private void setupRightDrawer()
 	{
+		
 		rightMDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         rightMDrawerList = (ListView) findViewById(R.id.drawer_right_list);
         rightDrawer = (LinearLayout) findViewById(R.id.drawer_right);
@@ -188,6 +189,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         rightMDrawerLayout.setDrawerListener(rightMDrawerToggle); 
 
         rightMDrawerList.setOnItemClickListener(new SlideMenuClickListener());
+        
 	}
 	
 	private void SampleDBEntries()
