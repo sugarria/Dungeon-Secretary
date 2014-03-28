@@ -105,12 +105,12 @@ public class StatListPageActivity extends Fragment implements OnClickListener, D
 	    	{   		
 	    		//pop up add window
 	    		FragmentManager fm = getActivity().getSupportFragmentManager();
-	    		EditStatDialog ed = new EditStatDialog();
-	    		ed.addDialogListener(this);
+	    		AddStatDialog ad = new AddStatDialog();
+	    		ad.addDialogListener(this);
 	    		Bundle bundle = new Bundle();	
 				bundle.putLong("charId",charId);
-				ed.setArguments(bundle);
-	    		ed.show(fm, "fragment_add_stat");
+				ad.setArguments(bundle);
+	    		ad.show(fm, "fragment_add_stat");
 	    		/*
 	    		AddStat();
 	    		*/
@@ -138,10 +138,6 @@ public class StatListPageActivity extends Fragment implements OnClickListener, D
 		dbData.insertStat(newStat2);
 	}
 		
-	public void onFinishEditDialog() {
-    	fillStats();
-		
-    }
 	
 	private class StatListClickListener implements ListView.OnItemClickListener
 	{

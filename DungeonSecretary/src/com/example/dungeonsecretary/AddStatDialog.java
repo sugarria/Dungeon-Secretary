@@ -247,7 +247,7 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
 	{
 		for(int i = 0; i < listeners.size(); i++)
 		{
-			listeners.get(i).onDialogFinish(R.id.dialog_new_character);
+			listeners.get(i).onDialogFinish(R.id.dialog_add_stat);
 		}
 	}
 	
