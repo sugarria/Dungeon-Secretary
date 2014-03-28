@@ -268,7 +268,7 @@ public class DungeonDataSource {
 		database.update(MySQLiteHelper.TABLE_STATS, values,  MySQLiteHelper.STATS_COLUMN_ID + " = " + id, null);
 	}
 	
-	private StatData getStat(long characterId, String statName)
+	public StatData getStat(long characterId, String statName)
 	{
 		//string for the where clause to compare both owner name and character name
 		String where = MySQLiteHelper.STATS_COLUMN_CHARACTER_ID + " = " + characterId

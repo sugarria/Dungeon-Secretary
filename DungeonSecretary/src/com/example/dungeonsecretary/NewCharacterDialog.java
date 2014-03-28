@@ -37,16 +37,8 @@ public class NewCharacterDialog extends DialogFragment implements OnClickListene
 	DungeonDataSource dbData;
 	long charId;
 	
-	private StatListPageActivity parent;
-	
-	public void setParent(StatListPageActivity pa)
-	{
-		parent = pa;
-	}
-	
 	 public NewCharacterDialog() {
 	       listeners = new ArrayList<DialogListener>();
-	        // Empty constructor required for DialogFragment
 	    }
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

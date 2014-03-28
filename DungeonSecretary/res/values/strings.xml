@@ -12,7 +12,6 @@
 
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>
-    <string name="plus">+</string>
     <string name="stat_save">Save</string>
     <string name="stat_edit">Edit</string>
     <string name="stat_delete">Delete</string>

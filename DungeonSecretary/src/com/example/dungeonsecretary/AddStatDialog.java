@@ -32,7 +32,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.view.inputmethod.EditorInfo;
 
 
-public class EditStatDialog extends DialogFragment implements OnClickListener, OnItemSelectedListener {
+public class AddStatDialog extends DialogFragment implements OnClickListener, OnItemSelectedListener {
 	private EditText mEditTextStatName;
 	private EditText mEditTextStatType;
 	private EditText mEditTextStatValue1;
@@ -53,7 +53,7 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 
 	private List<DialogListener> listeners;
 	
-	public EditStatDialog() {
+	public AddStatDialog() {
 	       listeners = new ArrayList<DialogListener>();
     }
 	
@@ -247,7 +247,7 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 	{
 		for(int i = 0; i < listeners.size(); i++)
 		{
-			listeners.get(i).onDialogFinish(R.id.dialog_new_character);
+			listeners.get(i).onDialogFinish(R.id.dialog_add_stat);
 		}
 	}
 	
