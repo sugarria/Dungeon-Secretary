@@ -71,11 +71,10 @@ public class NewCharacterDialog extends DialogFragment implements OnClickListene
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
-			case R.id.btn_save:
+			case R.id.btn_new_char_save:
 	    	{
 	    		charName = mEditName.getText().toString();
 	    		system = mEditSystem.getText().toString();
-	    		Bundle bundle = this.getArguments();
 	    		UserData owner = dbData.getCurrentUser();
 	    		CharacterData newChar = new CharacterData();	
 	    		newChar.setName(charName);
@@ -91,7 +90,7 @@ public class NewCharacterDialog extends DialogFragment implements OnClickListene
 	    		
 	    		break;
 			}
-			case R.id.btn_cancel:
+			case R.id.btn_new_char_cancel:
 			{
 				//do nothing
 				this.dismiss();
@@ -104,7 +103,7 @@ public class NewCharacterDialog extends DialogFragment implements OnClickListene
 	{
 		for(int i = 0; i < listeners.size(); i++)
 		{
-			listeners.get(i).onDialogFinish(getId());
+			listeners.get(i).onDialogFinish(R.id.dialog_new_character);
 		}
 	}
 	
