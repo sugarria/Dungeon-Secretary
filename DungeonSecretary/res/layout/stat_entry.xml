@@ -34,13 +34,14 @@
         android:textColor="#444444"
         android:textSize="20sp"
         android:textStyle="bold"/>
-    
+   <!-- 
     <Button
             android:id="@+id/addChildButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"     
             android:onClick="addStatChild"
             android:text="@string/plus" />
+             --> 
 
 </TableRow>
 <TableRow

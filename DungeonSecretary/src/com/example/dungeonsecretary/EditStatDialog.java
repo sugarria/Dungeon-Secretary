@@ -99,10 +99,24 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 		switch(v.getId()){
 		case R.id.btn_save:
     	{
+    		Bundle bundle = this.getArguments();
+    		charId = bundle.getLong("charId");
     		statName = mEditTextStatName.getText().toString();
     		statType = mEditTextStatType.getText().toString();
     		statValue1 = mEditTextStatValue1.getText().toString();
     		statValue2 = mEditTextStatValue2.getText().toString();
+    		StatData statValueFromOther;
+    		StatData statValueFromOther2;
+    		if(!isNumeric(statValue1)){
+    			statValueFromOther = dbData.getStat(charId, statValue1);  			
+    			statValue1 = changeToFinalValue(statValueFromOther.getValue());
+    		}
+    		if(!isNumeric(statValue2)){
+    			statValueFromOther2 = dbData.getStat(charId, statValue2);
+    			statValue2 = changeToFinalValue(statValueFromOther2.getValue());
+    		}
+    		
+    		
     		if(operationResult.equals("+")){
     			value = Integer.parseInt(statValue1) + Integer.parseInt(statValue2);
     			statEquation = statValue1 + "|" + "+" + "|" + statValue2;
@@ -123,8 +137,7 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
     		mEditTextStatValue.setText(Integer.toString(value));
     	
     		statValue = Integer.toString(value);
-    		Bundle bundle = this.getArguments();
-    		charId = bundle.getLong("charId");
+    	
     		StatData newStat = new StatData();	
     		newStat.setName(statName);
     		newStat.setCharacterId(charId);
@@ -200,6 +213,40 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 		
 	};
 	
+	public static boolean isNumeric(String str)
+	{
+	  return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
+	}
+	
+	public String changeToFinalValue(String equation){
+		 if (equation.contains("|")) {
+	        	String[] values= equation.split("\\|");
+	            String value1 = values[0];
+	            String operation = values[1];
+	            String value2 = values[2];
+	            
+	            int finalValue=0;
+	            
+	            if(operation.equals("+")){
+	            	finalValue = Integer.parseInt(value1) + Integer.parseInt(value2);
+	            }
+	            else if(operation.equals("-")){
+	            	finalValue = Integer.parseInt(value1) - Integer.parseInt(value2);
+	            }
+	            else if(operation.equals("x")){
+	            	finalValue = Integer.parseInt(value1) * Integer.parseInt(value2);
+	            }
+	            else if(operation.equals("/")){
+	            	finalValue = Integer.parseInt(value1) / Integer.parseInt(value2);
+	            }
+	           
+	            return Integer.toString(finalValue);
+	           
+	        } else {
+	        	return equation;
+	        	
+	        }
+	}
 	   
 } 
 
