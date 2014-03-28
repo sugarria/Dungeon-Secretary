@@ -29,6 +29,11 @@
     <!-- for button -->
      <string name="btn_cancel">Cancel</string>
      <string name="btn_save">Save</string>
+     <string name="btn_delete">Delete</string>
+    
+     
+     
+     
     
     <string-array name="math_operation">
         <item>+</item>

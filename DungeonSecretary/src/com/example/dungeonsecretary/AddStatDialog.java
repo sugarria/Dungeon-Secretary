@@ -57,14 +57,11 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
 	       listeners = new ArrayList<DialogListener>();
     }
 	
-	public interface EditNameDialogListener {
-        void onFinishEditDialog();
-    }
 	 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-       View view = inflater.inflate(R.layout.fragment_edit_stat, container);
+       View view = inflater.inflate(R.layout.fragment_add_stat, container);
        
        mEditTextStatName = (EditText) view.findViewById(R.id.txt_your_name);
        mEditTextStatType = (EditText) view.findViewById(R.id.txt_your_type);

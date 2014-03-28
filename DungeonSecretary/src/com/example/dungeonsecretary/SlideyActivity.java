@@ -221,13 +221,6 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 		mTitle = leftMDrawerTitle = rightMDrawerTitle= getTitle();
 		
 		dbData = DungeonDataSource.getInstance(getApplicationContext());
-		//dbData.open();
-		/*if(DEV_resetDatabase)
-		{
-			dbData.resetDatabase();
-			dbData.close();
-			dbData.open();
-		}*/
 		allCharacters = dbData.getAllCharacters();
 		if(allCharacters.size() == 0)
 		{
@@ -276,6 +269,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 			fragment = new StatListPageActivity();
 			Bundle bundle = new Bundle();
 			
+			//Probably change this to use the adapter
 			long charId = allCharacters.get(position).getId();
 			
 			bundle.putLong("charId",charId);

@@ -111,10 +111,6 @@ public class StatListPageActivity extends Fragment implements OnClickListener, D
 				bundle.putLong("charId",charId);
 				ad.setArguments(bundle);
 	    		ad.show(fm, "fragment_add_stat");
-	    		/*
-	    		AddStat();
-	    		*/
-	    		
 	    		break;
 	    		
 			}
@@ -144,6 +140,16 @@ public class StatListPageActivity extends Fragment implements OnClickListener, D
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
 		{
 			//open the edit dialog here
+			FragmentManager fm = getActivity().getSupportFragmentManager();
+    		EditStatDialog ed = new EditStatDialog();
+    		ed.addDialogListener(StatListPageActivity.this);
+    		Bundle bundle = new Bundle();	
+			bundle.putLong("charId",charId);
+			StatData statToEdit = (StatData)statListAdapter.getItem(position);
+			String statNameToEdit = statToEdit.getName();
+			bundle.putString("statNameToEdit", statNameToEdit);
+			ed.setArguments(bundle);
+    		ed.show(fm, "fragment_edit_stat");
 		}
 	}
 
@@ -152,6 +158,10 @@ public class StatListPageActivity extends Fragment implements OnClickListener, D
 		switch(dialogId)
 		{
 			case R.id.dialog_add_stat:
+			{
+				fillStats();
+			}
+			case R.id.dialog_edit_stat:
 			{
 				fillStats();
 			}

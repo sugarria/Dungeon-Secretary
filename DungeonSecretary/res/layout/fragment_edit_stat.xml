@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/edit_name"
+    android:id="@+id/dialog_edit_stat"
     android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:layout_gravity="center" android:orientation="vertical"  >
 
     <TextView
-        android:id="@+id/lbl_your_name" android:text="Stat name" 
+        android:id="@+id/edit_lbl_your_name" android:text="Stat name" 
         android:layout_width="wrap_content" android:layout_height="wrap_content" />
       
-    <EditText
-        android:id="@+id/txt_your_name"
+    <TextView
+        android:id="@+id/edit_txt_your_name"
         android:layout_width="match_parent"  
         android:layout_height="wrap_content" />
     
      <TextView
-        android:id="@+id/lbl_your_type" android:text="Stat type" 
+        android:id="@+id/edit_lbl_your_type" android:text="Stat type" 
         android:layout_width="wrap_content" android:layout_height="wrap_content" />
       
-    <EditText
-        android:id="@+id/txt_your_type"
+    <TextView
+        android:id="@+id/edit_txt_your_type"
         android:layout_width="match_parent"  
         android:layout_height="wrap_content" />
     
     <TextView
-        android:id="@+id/lbl_your_value" android:text="Stat value" 
+        android:id="@+id/edit_lbl_your_value" android:text="Stat value" 
         android:layout_width="wrap_content" android:layout_height="wrap_content" />
    
     <LinearLayout 
@@ -31,14 +31,14 @@
          android:layout_gravity="center" android:orientation="horizontal"> 
 
 	    <EditText
-	        android:id="@+id/txt_your_value1"
+	        android:id="@+id/edit_txt_your_value1"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1.5"
 	        android:textSize="10sp" />
 	    
 	    <Spinner 
-	        android:id="@+id/txt_your_operation"
+	        android:id="@+id/edit_txt_your_operation"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1.6"
@@ -47,14 +47,14 @@
 	        android:textSize="10sp" />
 	    
 	    <EditText
-	        android:id="@+id/txt_your_value2"
+	        android:id="@+id/edit_txt_your_value2"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1.5"
 	        android:textSize="10sp" />
 	    
 	    <TextView
-	        android:id="@+id/txt_your_equal"
+	        android:id="@+id/edit_txt_your_equal"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:text="="
@@ -62,7 +62,7 @@
 	        android:layout_weight="1.8" />
 
 	    <EditText
-	        android:id="@+id/txt_your_value"
+	        android:id="@+id/edit_txt_your_value"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:textSize="10sp"
@@ -76,18 +76,27 @@
 	    android:layout_gravity="center" android:orientation="horizontal" >
 
 		<Button
-		    android:id="@+id/btn_cancel"
+		    android:id="@+id/btn_edit_cancel"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_weight="1"
 		    android:text="@string/btn_cancel" />
 	
 		<Button
-		    android:id="@+id/btn_save"
+		    android:id="@+id/btn_edit_delete"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:text="@string/btn_delete" />
+		
+		<Button
+		    android:id="@+id/btn_edit_save"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_weight="1"
 		    android:text="@string/btn_save" />
+		
+		
 	</LinearLayout>
 
 "

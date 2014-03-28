@@ -33,12 +33,13 @@ import android.view.inputmethod.EditorInfo;
 
 
 public class EditStatDialog extends DialogFragment implements OnClickListener, OnItemSelectedListener {
-	private EditText mEditTextStatName;
-	private EditText mEditTextStatType;
-	private EditText mEditTextStatValue1;
-	private EditText mEditTextStatValue2;
-	private EditText mEditTextStatValue;
+	private TextView nameTextView;
+	private TextView typeTextView;
+	private EditText value1EditText;
+	private EditText value2EditText;
+	private EditText finalValueEditText;
 	private Spinner operation;
+	
 	String statName;
 	String statType;
 	String statValue1;
@@ -46,9 +47,15 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 	String operationResult;
 	String statValue;
 	String statEquation;
+	String value1FromEq;
+    String operationFromEq;
+    String value2FromEq;
+	
+	StatData editStat;
 	
 	DungeonDataSource dbData;
 	long charId;
+	String statNameToEdit;
 	int value;
 
 	private List<DialogListener> listeners;
@@ -66,21 +73,62 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
             Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.fragment_edit_stat, container);
        
-       mEditTextStatName = (EditText) view.findViewById(R.id.txt_your_name);
-       mEditTextStatType = (EditText) view.findViewById(R.id.txt_your_type);
-       mEditTextStatValue1 = (EditText) view.findViewById(R.id.txt_your_value1);
-       mEditTextStatValue2 = (EditText) view.findViewById(R.id.txt_your_value2);
-       mEditTextStatValue = (EditText) view.findViewById(R.id.txt_your_value);
-       operation = (Spinner) view.findViewById(R.id.txt_your_operation); 
-       Button btn_save= (Button) view.findViewById(R.id.btn_save);
-       Button btn_cancel= (Button) view.findViewById(R.id.btn_cancel);
+       dbData = DungeonDataSource.getInstance(getActivity().getApplicationContext());
+       
+       Bundle bundle = this.getArguments();
+       charId = bundle.getLong("charId");
+       statNameToEdit = bundle.getString("statNameToEdit");
+       
+      nameTextView = (TextView)view.findViewById(R.id.edit_txt_your_name);
+      typeTextView = (TextView)view.findViewById(R.id.edit_txt_your_type);
+      value1EditText = (EditText) view.findViewById(R.id.edit_txt_your_value1);
+      value2EditText = (EditText) view.findViewById(R.id.edit_txt_your_value2);
+   	  finalValueEditText = (EditText) view.findViewById(R.id.edit_txt_your_value);
+   	  operation = (Spinner) view.findViewById(R.id.edit_txt_your_operation);
+   	  
+   	  editStat = dbData.getStat(charId, statNameToEdit); 
+   	  
+   	  nameTextView.setText(editStat.getName());
+   	  typeTextView.setText(editStat.getType());
+   	  
+   	  statName = editStat.getName();
+   	  statType = editStat.getType();
+   	  
+   	if (editStat.getValue().contains("|")) {
+    	String[] values= editStat.getValue().split("\\|");
+        value1FromEq = values[0];
+        operationFromEq = values[1];
+        value2FromEq = values[2];
+        value1EditText.setText(value1FromEq);
+     	value2EditText.setText(value2FromEq);
+     	finalValueEditText.setText(changeToFinalValue(editStat.getValue()));
+   	}
+   	  
+   	  
+   	  if(operation.equals("+")){
+   		operation.setSelection(0);
+   	  }
+   	  else if(operation.equals("-")){
+   		operation.setSelection(1);
+   	  }
+   	  else if(operation.equals("*")){
+   		operation.setSelection(2);
+   	  }
+   	  else if(operation.equals("/")){
+   		operation.setSelection(3);
+   	  }
+     
+       Button btn_cancel = (Button) view.findViewById(R.id.btn_edit_cancel);
+       Button btn_delete= (Button) view.findViewById(R.id.btn_edit_delete);
+       Button btn_save= (Button) view.findViewById(R.id.btn_edit_save);
     
        getDialog().setTitle("Enter Stat Name");
-       dbData = DungeonDataSource.getInstance(getActivity().getApplicationContext());     
+            
        
        operation.setOnItemSelectedListener(this);      
-       btn_save.setOnClickListener(this);
        btn_cancel.setOnClickListener(this);
+       btn_delete.setOnClickListener(this);
+       btn_save.setOnClickListener(this);
        
        //mEditTextStatValue1.addTextChangedListener(updateStatValue);
        //mEditTextStatValue1.addTextChangedListener(updateStatValue);
@@ -92,16 +140,17 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
-		case R.id.btn_save:
+		case R.id.btn_edit_save:
     	{
     		Bundle bundle = this.getArguments();
     		charId = bundle.getLong("charId");
-    		statName = mEditTextStatName.getText().toString();
-    		statType = mEditTextStatType.getText().toString();
-    		statValue1 = mEditTextStatValue1.getText().toString();
-    		statValue2 = mEditTextStatValue2.getText().toString();
+  
+    		statValue1 = value1EditText.getText().toString();
+    		statValue2 = value2EditText.getText().toString();
     		StatData statValueFromOther;
     		StatData statValueFromOther2;
+    		
+    		//if you get data from other stat
     		if(!isNumeric(statValue1)){
     			statValueFromOther = dbData.getStat(charId, statValue1);  			
     			statValue1 = changeToFinalValue(statValueFromOther.getValue());
@@ -129,28 +178,32 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
     			statEquation = statValue1 + "|" + "/" + "|" + statValue2;
     			
     		}
-    		mEditTextStatValue.setText(Integer.toString(value));
+    		finalValueEditText.setText(Integer.toString(value));
     	
     		statValue = Integer.toString(value);
     	
-    		StatData newStat = new StatData();	
-    		newStat.setName(statName);
-    		newStat.setCharacterId(charId);
-    		newStat.setType(statType);
-    		newStat.setValue(statEquation);
-    		dbData.insertStat(newStat);
+
+    	   	editStat = dbData.getStat(charId, statNameToEdit); 
+    		editStat.setValue(statEquation);
+    		dbData.updateStat(editStat);
 
     		callDialogListeners();
     		this.dismiss();
     		
     		break;
 		}
-		case R.id.btn_cancel:
+		case R.id.btn_edit_cancel:
 		{
 			//do nothing
 			this.dismiss();
 			break;
 		}	
+		case R.id.btn_edit_delete:
+		{
+			//do nothing
+			this.dismiss();
+			break;
+		}
 		}
 		
 	}
@@ -166,7 +219,7 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 		// TODO Auto-generated method stub
 		
 	}
-	
+	/*
 	private TextWatcher updateStatValue = new TextWatcher(){
 
 		@Override
@@ -206,6 +259,7 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 		}
 		
 	};
+	*/
 	
 	public static boolean isNumeric(String str)
 	{
@@ -247,7 +301,7 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 	{
 		for(int i = 0; i < listeners.size(); i++)
 		{
-			listeners.get(i).onDialogFinish(R.id.dialog_new_character);
+			listeners.get(i).onDialogFinish(R.id.dialog_edit_stat);
 		}
 	}
 	
