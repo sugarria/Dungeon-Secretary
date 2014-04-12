@@ -30,6 +30,9 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.parse.Parse;
+import com.parse.ParseAnalytics;
+import com.parse.ParseObject;
 
 public class MainActivity extends Activity implements OnClickListener,
 		ConnectionCallbacks, OnConnectionFailedListener {
@@ -89,6 +92,14 @@ public class MainActivity extends Activity implements OnClickListener,
 				.addConnectionCallbacks(this)
 				.addOnConnectionFailedListener(this).addApi(Plus.API, null)
 				.addScope(Plus.SCOPE_PLUS_LOGIN).build();
+		
+		Parse.initialize(this, "E8H0nRddgfMBoHMya6GPBM4IVwZAnuqq4jZUzhzG", "ZQi4BMLnzucog6zPIEOzuMe7KMlTqZLqhvD2VcDY");
+		
+		/*
+		ParseObject testObject = new ParseObject("TestObject");
+		testObject.put("foo", "bar");
+		testObject.saveInBackground();
+		*/
 	}
 
 	protected void onStart() {

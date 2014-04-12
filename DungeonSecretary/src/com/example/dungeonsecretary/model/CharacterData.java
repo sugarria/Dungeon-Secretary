@@ -13,8 +13,19 @@ public class CharacterData {
 	private String system;
 	private boolean isPublic;
 	private boolean isShared;
+	private String objectId; // this is a parse.com objectId
 	
 	public List<StatData> stats;
+	
+	public String getObjectId()
+	{
+		return objectId;
+	}
+	
+	public void setObjectId(String objectId)
+	{
+		this.objectId = objectId;
+	}
 	
 	public long getId()
 	{

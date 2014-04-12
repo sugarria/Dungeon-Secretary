@@ -2,6 +2,7 @@ package com.example.dungeonsecretary;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.example.dungeonsecretary.adapter.CharacterDrawerListAdapter;
@@ -10,9 +11,14 @@ import com.example.dungeonsecretary.interfaces.DialogListener;
 import com.example.dungeonsecretary.model.CharacterData;
 import com.example.dungeonsecretary.model.CharacterDrawerItem;
 import com.example.dungeonsecretary.model.NavDrawerItem;
+import com.example.dungeonsecretary.model.StatData;
 import com.example.dungeonsecretary.model.UserData;
 import com.example.dungeonsecretary.sql.DungeonDataSource;
 import com.example.dungeonsecretary.sql.MySQLiteHelper;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -38,6 +44,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 
 public class SlideyActivity extends FragmentActivity implements OnClickListener, DialogListener{
@@ -62,11 +69,11 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 	private CharacterDrawerListAdapter charLeftAdapter;
 	
 	//right slide menu items
-	private List<CharacterData> sharedCharacters;
+	private List<CharacterData> sharedCharacters, searchedCharacters;
 	private ArrayList<CharacterDrawerItem> rightCharDrawerItems, rightSearchResult;
 	private CharacterDrawerListAdapter charRightAdapter;
-	private boolean searching;
 	private String query;
+	private CharacterData tempChar;
 	
 	private void fillCharacterList()
 	{
@@ -87,6 +94,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 		rightCharDrawerItems = new ArrayList<CharacterDrawerItem>();
 
 		List<CharacterData> temp = new ArrayList<CharacterData>();
+		/*
 		if(searching)
 		{
 			// prune non-public files
@@ -101,6 +109,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 		}
 		else
 		{
+		*/
 			// get friends (will use this later to only get shared files from friends)
 			
 			
@@ -113,7 +122,9 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 					temp.add(tempChar);
 				}			
 			}
+			/*
 		}
+		*/
 		for (int i = 0; i < temp.size(); i++)
 		{
 			sharedCharacters.remove(temp.get(i));
@@ -199,33 +210,41 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 		CharacterData test1 = new CharacterData();
 		CharacterData test2 = new CharacterData();
 		CharacterData test3 = new CharacterData();
+		CharacterData test4 = new CharacterData();
 		
 		
 		test1.setName("Character1");
 		test2.setName("Character2");
 		test3.setName("Character3");
+		test4.setName("Waldo");
 				
 		test1.setOwnerId(user.getId());
 		test2.setOwnerId(user.getId());
 		test3.setOwnerId(user.getId());
+		test4.setOwnerId(user.getId()+1);
 		
 		
 		test1.setSystem("D&D 3.5");
 		test2.setSystem("Pathfinder");
 		test3.setSystem("FATE Core");
+		test4.setSystem("D&D 4e");
 
 		test1.setPublic(false);
 		test2.setPublic(false);
 		test3.setPublic(false);
+		test4.setPublic(true);
 
 		test1.setShared(true);
 		test2.setShared(false);
 		test3.setShared(true);
+		test4.setShared(false);
 
 		dbData.insertCharacter(test1);
 		dbData.insertCharacter(test2);
 		dbData.insertCharacter(test3);
+		dbData.insertCharacter(test4);
 	}
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -249,29 +268,114 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         // enabling action bar app icon and behaving it as toggle button
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
- 
-
+        
         if (savedInstanceState == null) {
             // on first time display view for first nav item
             displayView(-1);
         }
-        
+		
         btnNewChar = (Button)findViewById(R.id.btn_drawer_new_char);
         btnNewChar.setOnClickListener(this);
         
-        // handle search intent
-        Intent intent = getIntent();
-        if (Intent.ACTION_SEARCH.equals(intent.getAction()))
-        {
-        	query = intent.getStringExtra(SearchManager.QUERY);
-        	searching = true;
-        }
-        else
-        {
-        	searching = false;
-        }
+        SearchView searchView = (SearchView)findViewById(R.id.right_search_widget);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+			
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				Log.d("bacon", "text submitted");
+				return false;
+			}
+			
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				Log.d("bacon", "text changed");
+				publicSearchQuery(newText);
+				return false;
+			}
+		});
+        
+        /*
+        List<StatData> stats = new ArrayList<StatData>();
+        StatData temp = new StatData();
+        temp.setName("Strength");
+        temp.setType("Number");
+        temp.setValue("16");
+        stats.add(temp);
+        temp = new StatData();
+        temp.setName("Dexterity");
+        temp.setType("Number");
+        temp.setValue("10");
+        stats.add(temp);
+        sendCharacterToCloud("Erevan", "D&D 4e", "Eric Mathews", stats, true, true);
+        stats = new ArrayList<StatData>();
+        temp = new StatData();
+        temp.setName("Strength");
+        temp.setType("Number");
+        temp.setValue("8");
+        stats.add(temp);
+        temp = new StatData();
+        temp.setName("Dexterity");
+        temp.setType("Number");
+        temp.setValue("10");
+        stats.add(temp);
+        sendCharacterToCloud("Wycliff", "Pathfinder", "Shawn", stats, true, false);
+        stats = new ArrayList<StatData>();
+        temp = new StatData();
+        temp.setName("Strength");
+        temp.setType("Number");
+        temp.setValue("18");
+        stats.add(temp);
+        temp = new StatData();
+        temp.setName("Dexterity");
+        temp.setType("Number");
+        temp.setValue("16");
+        stats.add(temp);
+        sendCharacterToCloud("Waldo", "Pathfinder", "Shawn", stats, false, true);
+        stats = new ArrayList<StatData>();
+        temp = new StatData();
+        temp.setName("Strength");
+        temp.setType("Number");
+        temp.setValue("5");
+        stats.add(temp);
+        temp = new StatData();
+        temp.setName("Dexterity");
+        temp.setType("Number");
+        temp.setValue("6");
+        stats.add(temp);
+        sendCharacterToCloud("test1", "Pathfinder", "Sean", stats, false, true);
+        stats = new ArrayList<StatData>();
+        temp = new StatData();
+        temp.setName("Strength");
+        temp.setType("Number");
+        temp.setValue("2");
+        stats.add(temp);
+        temp = new StatData();
+        temp.setName("Dexterity");
+        temp.setType("Number");
+        temp.setValue("3");
+        stats.add(temp);
+        sendCharacterToCloud("test2", "Fate Core", "Sean", stats, true, false);
+        stats = new ArrayList<StatData>();
+        temp = new StatData();
+        temp.setName("Strength");
+        temp.setType("Number");
+        temp.setValue("99");
+        stats.add(temp);
+        temp = new StatData();
+        temp.setName("Dexterity");
+        temp.setType("Number");
+        temp.setValue("30");
+        stats.add(temp);
+        sendCharacterToCloud("test3", "Pathfinder", "Sean", stats, false, false);
+		*/
     }
  
+	@Override
+	protected void onNewIntent(Intent intent) {
+		query = intent.getStringExtra(SearchManager.QUERY);
+		Log.d("bacon", query);
+	}
+	
 	private class SlideMenuClickListener implements ListView.OnItemClickListener
 	{
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
@@ -414,5 +518,96 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 			}
 		}
 	}
+    
+    private void sendCharacterToCloud(String ownerName, String system, String name, List<StatData> stats, boolean sharedFlag, boolean publicFlag)
+    {
+    	deleteOldCharacter(name, ownerName, system);
+    	
+      	ParseObject characterObject = new ParseObject("Character");
+		characterObject.put("Name", name);
+		characterObject.put("Owner", ownerName);
+		characterObject.put("System", system);
+		characterObject.put("Shared", sharedFlag);
+		characterObject.put("Public", publicFlag);
+		characterObject.put("Deleted", false);
+		
+		for(int i = 0; i < stats.size(); i++)
+		{
+			ParseObject statObject = new ParseObject("Stat");
+			
+			statObject.put("ParentID", characterObject);
+			statObject.put("Name", stats.get(i).getName());
+			statObject.put("Type", stats.get(i).getType());
+			statObject.put("Value", stats.get(i).getValue());
+			statObject.saveInBackground();
+		}
+    }
 
+	private void deleteOldCharacter(String name, String ownerName,
+			String system) {
+		ParseQuery<ParseObject> qResults = ParseQuery.getQuery("Character");
+		qResults.whereEqualTo("Name", name);
+		qResults.whereEqualTo("Owner", ownerName);
+		qResults.whereEqualTo("System", system);
+		qResults.whereEqualTo("Deleted", false);
+		qResults.findInBackground(new FindCallback<ParseObject>() {
+			public void done(List<ParseObject> characterList, ParseException e) {
+				if (e == null && characterList.size() != 0) {
+		            characterList.get(0).deleteInBackground();
+		        }
+			}
+		});
+	}
+	
+	private void publicSearchQuery(String searchString)
+	{
+		ParseQuery<ParseObject> ownerQuery = ParseQuery.getQuery("Character");
+		ownerQuery.whereMatches("Owner", searchString, "i");
+		ownerQuery.whereEqualTo("Public", true);
+		
+		ParseQuery<ParseObject> nameQuery = ParseQuery.getQuery("Character");
+		nameQuery.whereMatches("Name", searchString, "i");
+		nameQuery.whereEqualTo("Public", true);
+		
+		ParseQuery<ParseObject> systemQuery = ParseQuery.getQuery("Character");
+		systemQuery.whereMatches("System", searchString, "i");
+		systemQuery.whereEqualTo("Public", true);
+		
+		List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();
+		queries.add(ownerQuery);
+		queries.add(nameQuery);
+		queries.add(systemQuery);
+		
+		ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
+		mainQuery.findInBackground(new FindCallback<ParseObject>() {
+			  public void done(List<ParseObject> characterList, ParseException e) {
+			    // results has the list of characters with searchString in the
+			      // name, owner, or system field.
+			    if (e == null) { // query responds with success
+			    	rightSearchResult = new ArrayList<CharacterDrawerItem>();
+			    	for(ParseObject character : characterList)
+			    	{
+			    		tempChar = new CharacterData();
+			    		tempChar.setObjectId(character.getObjectId());
+			    		tempChar.setName(character.getString("Name"));
+			    		tempChar.setSystem(character.getString("System"));
+			    		tempChar.setPublic(true);
+			    		tempChar.setShared(character.getBoolean("Shared"));
+			    		// tempChar.setOwnerId(dbData.getUser(character.getString("Owner")).getId());  // fuck this shit
+				        statQuery(characterList);
+				        rightSearchResult.add(new CharacterDrawerItem(tempChar, character.getString("Owner")));
+			    	}
+			    	charRightAdapter = new CharacterDrawerListAdapter(getApplicationContext(), rightSearchResult);
+			        rightMDrawerList.setAdapter(charRightAdapter);
+			    } else {
+			        // no response from cloud
+			    }
+			  }
+			});
+	}
+
+	protected void statQuery(List<ParseObject> characterList) {
+		// TODO Auto-generated method stub
+		
+	}
 }
