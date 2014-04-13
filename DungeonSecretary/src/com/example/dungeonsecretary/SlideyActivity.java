@@ -21,6 +21,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import android.os.Bundle;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.support.v4.app.FragmentActivity;
@@ -76,7 +77,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 	private CharacterData tempChar;
 	private String[] buddies;
 	private boolean dirtySearch = false;
-	
+		
 	private void fillCharacterList()
 	{
 		allCharacters = dbData.getAllCharacters();
@@ -476,12 +477,28 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
             return true;
         }
         // Handle action bar actions click
+    	//Put fragment out here because for some reason inside the case is not a local variable...
+    	Fragment fragment;
         switch (item.getItemId()) {
         case R.id.action_settings:
-        	Fragment fragment = new CharSheetFragment();
+        	fragment = new CharSheetFragment();
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			fragmentManager.beginTransaction().replace(R.id.frame_container,  fragment).commit();
             return true;
+        case R.id.action_open_list:
+        {
+        	fragment = new StatListPageActivity();
+        	FragmentManager fMan = getSupportFragmentManager();
+        	fMan.beginTransaction().replace(R.id.frame_container, fragment).commit();    
+        	return true;
+        }
+        case R.id.action_open_sheet:
+        {
+        	fragment = new CharSheetFragment();
+        	FragmentManager fMan = getSupportFragmentManager();
+        	fMan.beginTransaction().replace(R.id.frame_container, fragment).commit();   
+        	return true;
+        }
         default:
             return super.onOptionsItemSelected(item);
         }

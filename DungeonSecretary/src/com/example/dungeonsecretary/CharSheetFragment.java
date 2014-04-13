@@ -17,6 +17,9 @@ import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -45,6 +48,7 @@ public class CharSheetFragment extends Fragment implements OnClickListener, Dial
             Bundle savedInstanceState) {
   
         View rootView = inflater.inflate(R.layout.char_sheet_layout, container, false);
+        setHasOptionsMenu(true);
           
         dbData = DungeonDataSource.getInstance(getActivity().getApplicationContext());
         
@@ -134,4 +138,30 @@ public class CharSheetFragment extends Fragment implements OnClickListener, Dial
 		}
 		
 	}
+	
+	@Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		menu.clear();
+        inflater.inflate(R.menu.char_sheet_menu, menu);
+    }
+ 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+       
+        // Handle action bar actions click
+        switch (item.getItemId()) {
+        case R.id.action_settings:
+        {
+        	//Fragment fragment = new CharSheetFragment();
+			//FragmentManager fragmentManager = getSupportFragmentManager();
+			//fragmentManager.beginTransaction().replace(R.id.frame_container,  fragment).commit();
+            return true;
+        }
+        
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+	
+	
 }

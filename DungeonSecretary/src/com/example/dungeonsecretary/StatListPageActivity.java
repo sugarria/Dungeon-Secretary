@@ -32,6 +32,8 @@ import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -64,6 +66,7 @@ public class StatListPageActivity extends Fragment implements OnClickListener, D
 		// TODO Auto-generated method stub
 		// Get saved data if there is any
 		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 		
 		View rootView = inflater.inflate(R.layout.stat_list_page, container, false);
 		
@@ -72,8 +75,7 @@ public class StatListPageActivity extends Fragment implements OnClickListener, D
         
         dbData = DungeonDataSource.getInstance(getActivity().getApplicationContext());
 		
-		Bundle bundle = this.getArguments();
-		charId = bundle.getLong("charId");
+		charId = dbData.getCurrentCharacter().getId();
 		
 		// Get the ListView and assign an event handler to it
 		statView = (ListView) rootView.findViewById(R.id.list_stat_view);
@@ -166,5 +168,11 @@ public class StatListPageActivity extends Fragment implements OnClickListener, D
 			}
 		}
 	}
+	
+	@Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		menu.clear();
+        inflater.inflate(R.menu.stat_list_menu, menu);
+    }
 
 }
