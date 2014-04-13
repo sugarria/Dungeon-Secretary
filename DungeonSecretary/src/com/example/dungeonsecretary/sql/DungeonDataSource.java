@@ -216,6 +216,10 @@ public class DungeonDataSource {
 		Cursor cursor = database.query(MySQLiteHelper.TABLE_CHARACTERS, characterColumns, 
 				where, null, null, null, null);
 		cursor.moveToFirst();
+		if (cursor.getCount() <= 0)
+		{
+			return null;
+		}
 		CharacterData foundCharacter = characterAtCursor(cursor);
 		cursor.close();
 		return foundCharacter;

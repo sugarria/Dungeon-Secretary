@@ -30,6 +30,9 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.parse.Parse;
+import com.parse.ParseAnalytics;
+import com.parse.ParseObject;
 
 public class MainActivity extends Activity implements OnClickListener,
 		ConnectionCallbacks, OnConnectionFailedListener {
@@ -66,7 +69,6 @@ public class MainActivity extends Activity implements OnClickListener,
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.i("Lifecycle", "on create....");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
@@ -89,35 +91,26 @@ public class MainActivity extends Activity implements OnClickListener,
 				.addConnectionCallbacks(this)
 				.addOnConnectionFailedListener(this).addApi(Plus.API, null)
 				.addScope(Plus.SCOPE_PLUS_LOGIN).build();
+		
+		Parse.initialize(this, "E8H0nRddgfMBoHMya6GPBM4IVwZAnuqq4jZUzhzG", "ZQi4BMLnzucog6zPIEOzuMe7KMlTqZLqhvD2VcDY");
+		
+		/*
+		ParseObject testObject = new ParseObject("TestObject");
+		testObject.put("foo", "bar");
+		testObject.saveInBackground();
+		*/
 	}
 
 	protected void onStart() {
-		Log.i("Lifecycle", "on start....");
 		super.onStart();
 		mGoogleApiClient.connect();
 	}
 
 	protected void onStop() {
-		Log.i("Lifecycle", "on stop....");
 		super.onStop();
 		if (mGoogleApiClient.isConnected()) {
 			mGoogleApiClient.disconnect();
 		}
-	}
-
-	protected void onDestroy(){
-		Log.i("Lifecycle", "on destroy....");
-		super.onDestroy();
-	}
-	
-	protected void onPause(){
-		Log.i("Lifecycle", "on pause....");
-		super.onPause();
-	}
-	
-	protected void onResume(){
-		Log.i("Lifecycle", "on resume....");
-		super.onResume();
 	}
 	
 	/**
