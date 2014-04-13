@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.dungeonsecretary.model.CharacterData;
+import com.example.dungeonsecretary.model.SheetFieldData;
 import com.example.dungeonsecretary.model.StatData;
 import com.example.dungeonsecretary.model.UserData;
 
@@ -15,6 +16,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 public class DungeonDataSource {
+	
+	public static final long dbNullNum = -100;
 	
 	//make it a singleton
 	private static DungeonDataSource instance;
@@ -48,6 +51,9 @@ public class DungeonDataSource {
 	private String[] statColumns = {MySQLiteHelper.STATS_COLUMN_ID, 
 			MySQLiteHelper.STATS_COLUMN_CHARACTER_ID, MySQLiteHelper.STATS_COLUMN_NAME,
 			MySQLiteHelper.STATS_COLUMN_TYPE, MySQLiteHelper.STATS_COLUMN_VALUE};
+	private String[] fieldColumns = {MySQLiteHelper.FIELDS_COLUMN_CHAR_ID, 
+			MySQLiteHelper.FIELDS_COLUMN_INDEX, MySQLiteHelper.FIELDS_COLUMN_STAT_ID,
+			MySQLiteHelper.FIELDS_COLUMN_LABEL};
 	
 	//The current logged in user
 	private UserData currentUser;
@@ -111,6 +117,7 @@ public class DungeonDataSource {
 			cursor.moveToFirst();
 			foundUser = userAtCursor(cursor);
 		}
+		cursor.close();
 		return foundUser;
 	}
 	
@@ -127,6 +134,7 @@ public class DungeonDataSource {
 			cursor.moveToFirst();
 			foundUser = userAtCursor(cursor);
 		}
+		cursor.close();
 		return foundUser;
 	}
 	
@@ -165,18 +173,28 @@ public class DungeonDataSource {
 		return user;
 	}
 	
-	public void insertCharacter(CharacterData character)
+	public boolean insertCharacter(CharacterData character)
 	{
 		//duplication/error checking
-		//get data from character and insert it
-		ContentValues values = new ContentValues();
-		values.put(MySQLiteHelper.CHARACTERS_COLUMN_OWNER_ID, character.getOwnerId());
-		values.put(MySQLiteHelper.CHARACTERS_COLUMN_NAME, character.getName());
-		values.put(MySQLiteHelper.CHARACTERS_COLUMN_PUBLIC, character.getPublic());
-		values.put(MySQLiteHelper.CHARACTERS_COLUMN_SHARED, character.getShared());
-		values.put(MySQLiteHelper.CHARACTERS_COLUMN_SYSTEM, character.getSystem());
-		long insertId = database.insert(MySQLiteHelper.TABLE_CHARACTERS,  null,  values);
-		character.setId(insertId);
+		CharacterData duplicate = getCharacter(character.getId(), character.getName());
+		if(duplicate != null)
+		{
+			Log.e("SQL", "Attempt to insert duplicate character " + character.getName());
+			return false;
+		}
+		else
+			{
+			//get data from character and insert it
+			ContentValues values = new ContentValues();
+			values.put(MySQLiteHelper.CHARACTERS_COLUMN_OWNER_ID, character.getOwnerId());
+			values.put(MySQLiteHelper.CHARACTERS_COLUMN_NAME, character.getName());
+			values.put(MySQLiteHelper.CHARACTERS_COLUMN_PUBLIC, character.getPublic());
+			values.put(MySQLiteHelper.CHARACTERS_COLUMN_SHARED, character.getShared());
+			values.put(MySQLiteHelper.CHARACTERS_COLUMN_SYSTEM, character.getSystem());
+			long insertId = database.insert(MySQLiteHelper.TABLE_CHARACTERS,  null,  values);
+			character.setId(insertId);
+			return true;
+		}
 	}
 
 	public void updateCharacter(CharacterData character)
@@ -199,6 +217,7 @@ public class DungeonDataSource {
 				where, null, null, null, null);
 		cursor.moveToFirst();
 		CharacterData foundCharacter = characterAtCursor(cursor);
+		cursor.close();
 		return foundCharacter;
 	}
 	
@@ -209,6 +228,7 @@ public class DungeonDataSource {
 				where, null, null, null, null);
 		cursor.moveToFirst();
 		CharacterData foundCharacter = characterAtCursor(cursor);
+		cursor.close();
 		return foundCharacter;
 	}
 	
@@ -228,6 +248,10 @@ public class DungeonDataSource {
 	}
 	
 	private CharacterData characterAtCursor(Cursor cursor) {
+		if(cursor.isAfterLast())
+		{
+			return null;
+		}
 		CharacterData character = new CharacterData();
 		character.setId(cursor.getLong(0));
 		character.setOwnerId(cursor.getLong(1));
@@ -277,6 +301,19 @@ public class DungeonDataSource {
 				where, null, null, null, null);
 		cursor.moveToFirst();
 		StatData foundStat = StatAtCursor(cursor);
+		cursor.close();
+		return foundStat;
+	}
+	
+	public StatData getStat(long statId)
+	{
+		//string for the where clause to compare both owner name and character name
+		String where = MySQLiteHelper.STATS_COLUMN_ID + " = " + statId;
+		Cursor cursor = database.query(MySQLiteHelper.TABLE_STATS, statColumns, 
+				where, null, null, null, null);
+		cursor.moveToFirst();
+		StatData foundStat = StatAtCursor(cursor);
+		cursor.close();
 		return foundStat;
 	}
 	
@@ -304,6 +341,10 @@ public class DungeonDataSource {
 	}
 	
 	private StatData StatAtCursor(Cursor cursor) {
+		if(cursor.isAfterLast())
+		{
+			return null;
+		}
 		StatData stat = new StatData();
 		stat.setId(cursor.getLong(0));
 		stat.setCharacterId(cursor.getLong(1));
@@ -317,12 +358,102 @@ public class DungeonDataSource {
 	{
 		String where = MySQLiteHelper.USERS_COLUMN_GOOGLE_ACCOUNT + " = '" + gAccount + "'";
 		Cursor cursor = database.query(MySQLiteHelper.TABLE_USERS, userColumns, 
-				where, null, null, null, null);
+				where, null, null, null, null);		
 		if(cursor.getCount() == 0)
 		{
+			cursor.close();
 			return false;
 		}
+		cursor.close();
 		return true;
+	}
+	
+	///////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////
+	public void insertSheetField(SheetFieldData field)
+	{
+		//duplication/error checking
+		//get data from field and insert it
+		ContentValues values = new ContentValues();
+		values.put(MySQLiteHelper.FIELDS_COLUMN_CHAR_ID, field.getCharId());
+		values.put(MySQLiteHelper.FIELDS_COLUMN_INDEX, field.getIndex());
+		values.put(MySQLiteHelper.FIELDS_COLUMN_STAT_ID, field.getStatId());
+		if(field.getStatId() == dbNullNum)
+		{
+			values.put(MySQLiteHelper.FIELDS_COLUMN_LABEL, field.getLabel());
+		}
+		database.insert(MySQLiteHelper.TABLE_CHAR_SHEET_FIELDS,  null,  values);		
+	}
+	
+	public void updateSheetField(SheetFieldData field)
+	{
+		ContentValues values = new ContentValues();
+		values.put(MySQLiteHelper.FIELDS_COLUMN_CHAR_ID, field.getCharId());
+		values.put(MySQLiteHelper.FIELDS_COLUMN_INDEX, field.getIndex());
+		if(field.getStatId() != dbNullNum)
+		{
+			values.put(MySQLiteHelper.FIELDS_COLUMN_STAT_ID, field.getStatId());
+		}
+		if(field.getLabel() != null)
+		{
+			values.put(MySQLiteHelper.STATS_COLUMN_VALUE, field.getLabel());
+		}
+		
+		String where = MySQLiteHelper.FIELDS_COLUMN_CHAR_ID + " = " + field.getCharId()
+				+ " AND " + MySQLiteHelper.FIELDS_COLUMN_INDEX + " = '" + field.getIndex() + "'";
+		
+		database.update(MySQLiteHelper.TABLE_STATS, values,  where, null);
+	}
+	
+	public SheetFieldData getSheetField(long characterId, long index)
+	{
+		//string for the where clause to compare both owner name and character name
+		String where = MySQLiteHelper.FIELDS_COLUMN_CHAR_ID + " = " + characterId
+				+ " AND " + MySQLiteHelper.FIELDS_COLUMN_INDEX + " = '" + index + "'";
+		Cursor cursor = database.query(MySQLiteHelper.TABLE_CHAR_SHEET_FIELDS, fieldColumns, 
+				where, null, null, null, null);
+		cursor.moveToFirst();
+		SheetFieldData foundfield = FieldAtCursor(cursor);
+		cursor.close();
+		return foundfield;
+	}
+	
+	public List<SheetFieldData> getAllFieldsForCharacter(long characterId)
+	{
+		List<SheetFieldData> fields = new ArrayList<SheetFieldData>();
+		String where = MySQLiteHelper.FIELDS_COLUMN_CHAR_ID + " = " + characterId;
+		Cursor cursor = database.query(MySQLiteHelper.TABLE_CHAR_SHEET_FIELDS, 
+				fieldColumns, where, null, null, null, null);
+		cursor.moveToFirst();
+		while(!cursor.isAfterLast()) {
+			SheetFieldData field = FieldAtCursor(cursor);
+			fields.add(field);
+			cursor.moveToNext();
+		}
+		//make sure to close the cursor
+		cursor.close();
+		return fields;
+	}
+	
+	public void deleteField(long charId, long index) {
+		
+		String where = MySQLiteHelper.FIELDS_COLUMN_CHAR_ID + " = " + charId
+				+ " AND " + MySQLiteHelper.FIELDS_COLUMN_INDEX + " = '" + index + "'";
+		database.delete(MySQLiteHelper.TABLE_STATS, where, null);		
+	}
+	
+	private SheetFieldData FieldAtCursor(Cursor cursor) {
+		if(cursor.isAfterLast())
+		{
+			return null;
+		}
+		SheetFieldData field = new SheetFieldData();
+		field.setCharId(cursor.getLong(0));
+		field.setIndex(cursor.getLong(1));
+		field.setStatId(cursor.getLong(2));
+		field.setLabel(cursor.getString(3));
+		return field;
 	}
 	
 	public void setCurrentUser(String gAccount, String userName)

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_sheet_field"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:layout_gravity="center" android:orientation="horizontal"  >
+
+    <TextView
+        android:id="@+id/lbl_label"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:text="Display Text:"
+        android:textSize="15sp" />
+      
+    <TextView
+        android:id="@+id/lbl_stat"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lbl_label"
+        android:paddingBottom="20dp"
+        android:text="Display Stat:" />
+        
+    <EditText
+        android:id="@+id/txt_label"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/lbl_label"
+        android:text="testasdf"
+        android:textSize="15sp" />
+       
+    <Spinner
+        android:id="@+id/select_stat"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_label"
+        android:layout_toRightOf="@id/lbl_stat"
+        android:entries="@array/math_operation"
+        android:prompt="@string/select" />
+    
+     <Button
+         android:id="@+id/btn_set_label"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/txt_label"
+         android:text="Set Text" />
+
+     <Button
+         android:id="@+id/btn_set_stat"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentRight="true"
+         android:layout_below="@id/btn_set_label"
+         android:layout_toRightOf="@id/select_stat"
+         android:layout_weight="1"
+         android:text="@string/btn_save" />
+
+     <Button
+         android:id="@+id/btn_clear_display"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@+id/select_stat"
+         android:layout_centerHorizontal="true"
+         android:layout_weight="1"
+         android:text="Clear" />
+
+</RelativeLayout>

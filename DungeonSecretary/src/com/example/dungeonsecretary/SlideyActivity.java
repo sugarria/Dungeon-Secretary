@@ -338,6 +338,9 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         // Handle action bar actions click
         switch (item.getItemId()) {
         case R.id.action_settings:
+        	Fragment fragment = new CharSheetFragment();
+			FragmentManager fragmentManager = getSupportFragmentManager();
+			fragmentManager.beginTransaction().replace(R.id.frame_container,  fragment).commit();
             return true;
         default:
             return super.onOptionsItemSelected(item);

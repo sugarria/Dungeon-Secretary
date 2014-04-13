@@ -112,7 +112,6 @@ public class StatListPageActivity extends Fragment implements OnClickListener, D
 				ad.setArguments(bundle);
 	    		ad.show(fm, "fragment_add_stat");
 	    		break;
-	    		
 			}
 		}		
 	}

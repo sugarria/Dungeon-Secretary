@@ -9,6 +9,9 @@ import android.util.Log;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
+	/* 
+	 * Users table 
+	 */
 	public static final String TABLE_USERS = "users";
 	public static final String USERS_COLUMN_ID = "_id";
 	public static final String USERS_COLUMN_GOOGLE_ACCOUNT = "google_account";
@@ -19,7 +22,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 			+ USERS_COLUMN_ID + " integer primary key autoincrement, "
 			+ USERS_COLUMN_GOOGLE_ACCOUNT + " text not null, " 
 			+ USERS_COLUMN_USER_NAME + " text not null);";
-	
+	/* 
+	 * Characters table 
+	 */
 	public static final String TABLE_CHARACTERS = "characters";
 	public static final String CHARACTERS_COLUMN_ID = "_id";
 	public static final String CHARACTERS_COLUMN_OWNER_ID = "owner_id";
@@ -37,7 +42,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 			+ CHARACTERS_COLUMN_SHARED + " int, "
 			+ CHARACTERS_COLUMN_SYSTEM + " text"
 			+ ");";
-	
+	/* 
+	 * Stats table 
+	 */
 	public static final String TABLE_STATS = "stats";
 	public static final String STATS_COLUMN_ID = "_id";
 	public static final String STATS_COLUMN_CHARACTER_ID = "character_id";
@@ -52,8 +59,21 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 			+ STATS_COLUMN_NAME + " text not null, "
 			+ STATS_COLUMN_TYPE + " text not null, "
 			+ STATS_COLUMN_VALUE + " text"
-			+ ");";
-	
+			+ ");";	
+	/* 
+	 * Charsheet table 
+	 */
+	public static final String TABLE_CHAR_SHEET_FIELDS = "char_sheet";
+	public static final String FIELDS_COLUMN_CHAR_ID = "char_id";
+	public static final String FIELDS_COLUMN_INDEX = "grid_index";
+	public static final String FIELDS_COLUMN_STAT_ID = "stat_id";
+	public static final String FIELDS_COLUMN_LABEL = "label"; 
+	public static final String FIELDS_CREATE = "create table " 
+			+ TABLE_CHAR_SHEET_FIELDS + "("
+			+ FIELDS_COLUMN_CHAR_ID + " integer not null, "
+			+ FIELDS_COLUMN_INDEX + " integer not null, "
+			+ FIELDS_COLUMN_STAT_ID + " integer, " 
+			+ FIELDS_COLUMN_LABEL + " text" + ");";
 	
 	private static final String DATABASE_NAME = "dungeonSecretaryTest.db";
 	private static final int DATABASE_VERSION = 1;
@@ -69,6 +89,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 		database.execSQL(USERS_CREATE);
 		database.execSQL(CHARACTERS_CREATE);
 		database.execSQL(STATS_CREATE);
+		database.execSQL(FIELDS_CREATE);
 	}
 	
 	@Override
@@ -90,6 +111,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHARACTERS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHAR_SHEET_FIELDS);
 		onCreate(db);
 	}
 	

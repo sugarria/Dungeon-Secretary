@@ -84,11 +84,6 @@ public class StatListAdapter extends BaseAdapter {
         	statValue.setText(StatDataList.get(position).getValue());
         }
         
-       
-             
-         
-      
-         
         return convertView;
     }
  
