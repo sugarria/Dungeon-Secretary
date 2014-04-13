@@ -23,7 +23,7 @@
         
     <EditText
         android:id="@+id/txt_label"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/lbl_label"
         android:text="testasdf"
@@ -36,32 +36,30 @@
         android:layout_below="@id/txt_label"
         android:layout_toRightOf="@id/lbl_stat"
         android:entries="@array/math_operation"
-        android:prompt="@string/select" />
-    
+        android:prompt="@string/select" />     
+
      <Button
          android:id="@+id/btn_set_label"
-         android:layout_width="wrap_content"
+         android:layout_width="100dp"
          android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/txt_label"
+         android:layout_alignLeft="@+id/btn_set_stat"
+         android:layout_alignParentTop="true"
          android:text="Set Text" />
-
+     
      <Button
          android:id="@+id/btn_set_stat"
-         android:layout_width="wrap_content"
+         android:layout_width="100dp"
          android:layout_height="wrap_content"
-         android:layout_alignParentRight="true"
          android:layout_below="@id/btn_set_label"
          android:layout_toRightOf="@id/select_stat"
-         android:layout_weight="1"
-         android:text="@string/btn_save" />
-
+         android:text="Set Stat" />
+     
      <Button
          android:id="@+id/btn_clear_display"
-         android:layout_width="wrap_content"
+         android:layout_width="100dp"
          android:layout_height="wrap_content"
-         android:layout_below="@+id/select_stat"
-         android:layout_centerHorizontal="true"
-         android:layout_weight="1"
+         android:layout_alignLeft="@id/btn_set_stat"
+         android:layout_below="@+id/btn_set_stat"
          android:text="Clear" />
 
 </RelativeLayout>

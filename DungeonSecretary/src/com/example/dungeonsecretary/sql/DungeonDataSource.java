@@ -377,8 +377,29 @@ public class DungeonDataSource {
 	///////////////////////////////////////////////////////
 	public void insertSheetField(SheetFieldData field)
 	{
-		//duplication/error checking
-		//get data from field and insert it
+		SheetFieldData dupCheck = getSheetField(field.getCharId(), field.getIndex());
+		if(dupCheck == null)
+		{
+			//duplication/error checking
+			//get data from field and insert it
+			ContentValues values = new ContentValues();
+			values.put(MySQLiteHelper.FIELDS_COLUMN_CHAR_ID, field.getCharId());
+			values.put(MySQLiteHelper.FIELDS_COLUMN_INDEX, field.getIndex());
+			values.put(MySQLiteHelper.FIELDS_COLUMN_STAT_ID, field.getStatId());
+			if(field.getStatId() == dbNullNum)
+			{
+				values.put(MySQLiteHelper.FIELDS_COLUMN_LABEL, field.getLabel());
+			}
+			database.insert(MySQLiteHelper.TABLE_CHAR_SHEET_FIELDS,  null,  values);	
+		}
+		else
+		{
+			updateSheetField(field);
+		}
+	}
+	
+	public void updateSheetField(SheetFieldData field)
+	{
 		ContentValues values = new ContentValues();
 		values.put(MySQLiteHelper.FIELDS_COLUMN_CHAR_ID, field.getCharId());
 		values.put(MySQLiteHelper.FIELDS_COLUMN_INDEX, field.getIndex());
@@ -387,34 +408,18 @@ public class DungeonDataSource {
 		{
 			values.put(MySQLiteHelper.FIELDS_COLUMN_LABEL, field.getLabel());
 		}
-		database.insert(MySQLiteHelper.TABLE_CHAR_SHEET_FIELDS,  null,  values);		
-	}
-	
-	public void updateSheetField(SheetFieldData field)
-	{
-		ContentValues values = new ContentValues();
-		values.put(MySQLiteHelper.FIELDS_COLUMN_CHAR_ID, field.getCharId());
-		values.put(MySQLiteHelper.FIELDS_COLUMN_INDEX, field.getIndex());
-		if(field.getStatId() != dbNullNum)
-		{
-			values.put(MySQLiteHelper.FIELDS_COLUMN_STAT_ID, field.getStatId());
-		}
-		if(field.getLabel() != null)
-		{
-			values.put(MySQLiteHelper.STATS_COLUMN_VALUE, field.getLabel());
-		}
 		
 		String where = MySQLiteHelper.FIELDS_COLUMN_CHAR_ID + " = " + field.getCharId()
-				+ " AND " + MySQLiteHelper.FIELDS_COLUMN_INDEX + " = '" + field.getIndex() + "'";
+				+ " AND " + MySQLiteHelper.FIELDS_COLUMN_INDEX + " = " + field.getIndex();
 		
-		database.update(MySQLiteHelper.TABLE_STATS, values,  where, null);
+		database.update(MySQLiteHelper.TABLE_CHAR_SHEET_FIELDS, values,  where, null);
 	}
 	
 	public SheetFieldData getSheetField(long characterId, long index)
 	{
 		//string for the where clause to compare both owner name and character name
 		String where = MySQLiteHelper.FIELDS_COLUMN_CHAR_ID + " = " + characterId
-				+ " AND " + MySQLiteHelper.FIELDS_COLUMN_INDEX + " = '" + index + "'";
+				+ " AND " + MySQLiteHelper.FIELDS_COLUMN_INDEX + " = " + index;
 		Cursor cursor = database.query(MySQLiteHelper.TABLE_CHAR_SHEET_FIELDS, fieldColumns, 
 				where, null, null, null, null);
 		cursor.moveToFirst();
@@ -443,8 +448,8 @@ public class DungeonDataSource {
 	public void deleteField(long charId, long index) {
 		
 		String where = MySQLiteHelper.FIELDS_COLUMN_CHAR_ID + " = " + charId
-				+ " AND " + MySQLiteHelper.FIELDS_COLUMN_INDEX + " = '" + index + "'";
-		database.delete(MySQLiteHelper.TABLE_STATS, where, null);		
+				+ " AND " + MySQLiteHelper.FIELDS_COLUMN_INDEX + " = " + index;
+		database.delete(MySQLiteHelper.TABLE_CHAR_SHEET_FIELDS, where, null);		
 	}
 	
 	private SheetFieldData FieldAtCursor(Cursor cursor) {
