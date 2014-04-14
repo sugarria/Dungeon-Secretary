@@ -1,6 +1,9 @@
 package com.example.dungeonsecretary;
 
 import java.io.InputStream;
+import java.util.List;
+
+import org.apache.http.ParseException;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -19,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.dungeonsecretary.cloud.CloudOperations;
 import com.example.dungeonsecretary.sql.DungeonDataSource;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -28,11 +32,13 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.internal.db;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 public class MainActivity extends Activity implements OnClickListener,
 		ConnectionCallbacks, OnConnectionFailedListener {
@@ -66,7 +72,6 @@ public class MainActivity extends Activity implements OnClickListener,
 	//If you need to manually reset the database and build it from scratch 
 	//when the activity starts set this to true.
 	private boolean DEV_resetDatabase = false;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -188,6 +193,19 @@ public class MainActivity extends Activity implements OnClickListener,
 		}
 		
 		DungeonDataSource.getInstance(this).setCurrentUser(email, personName);
+
+		// add user to cloud, if they don't exist
+		ParseQuery<ParseObject> emailQuery = ParseQuery.getQuery("User");
+		emailQuery.whereEqualTo("GPlusEmail", email);
+		try {
+			List<ParseObject> users = emailQuery.find();
+			if (users.size() == 0) {
+				CloudOperations.addUserToCloud(this);
+			}
+		} catch (com.parse.ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// Update the UI after signin
 		updateUI(true);

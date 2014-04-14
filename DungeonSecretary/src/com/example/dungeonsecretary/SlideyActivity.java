@@ -6,15 +6,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.example.dungeonsecretary.adapter.CharacterDrawerListAdapter;
-import com.example.dungeonsecretary.adapter.NavDrawerListAdapter;
+import com.example.dungeonsecretary.cloud.CloudOperations;
 import com.example.dungeonsecretary.interfaces.DialogListener;
 import com.example.dungeonsecretary.model.CharacterData;
 import com.example.dungeonsecretary.model.CharacterDrawerItem;
-import com.example.dungeonsecretary.model.NavDrawerItem;
 import com.example.dungeonsecretary.model.StatData;
 import com.example.dungeonsecretary.model.UserData;
 import com.example.dungeonsecretary.sql.DungeonDataSource;
-import com.example.dungeonsecretary.sql.MySQLiteHelper;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -27,13 +25,9 @@ import android.app.SearchManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.content.res.TypedArray;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.ListFragment;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
@@ -260,7 +254,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         temp.setType("Number");
         temp.setValue("10");
         stats.add(temp);
-        sendCharacterToCloud("Erevan", "Eric Mathews", "D&D 4e", stats, true, true);
+        CloudOperations.sendCharacterToCloud("Erevan", "thepostit@gmail.com", "D&D 4e", stats, true, true);
         stats = new ArrayList<StatData>();
         temp = new StatData();
         temp.setName("Strength");
@@ -272,7 +266,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         temp.setType("Number");
         temp.setValue("10");
         stats.add(temp);
-        sendCharacterToCloud("Wycliff", "Shawn", "Pathfinder", stats, true, false);
+        CloudOperations.sendCharacterToCloud("Wycliff", "dummy@gmail.com", "Pathfinder", stats, true, false);
         stats = new ArrayList<StatData>();
         temp = new StatData();
         temp.setName("Strength");
@@ -284,7 +278,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         temp.setType("Number");
         temp.setValue("16");
         stats.add(temp);
-        sendCharacterToCloud("Waldo", "Shawn", "Pathfinder", stats, false, true);
+        CloudOperations.sendCharacterToCloud("Waldo", "dummy@gmail.com", "Pathfinder", stats, false, true);
         stats = new ArrayList<StatData>();
         temp = new StatData();
         temp.setName("Strength");
@@ -296,7 +290,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         temp.setType("Number");
         temp.setValue("6");
         stats.add(temp);
-        sendCharacterToCloud("test1", "Sean", "Pathfinder", stats, false, true);
+        CloudOperations.sendCharacterToCloud("test1", "dummy2@gmail.com", "Pathfinder", stats, false, true);
         stats = new ArrayList<StatData>();
         temp = new StatData();
         temp.setName("Strength");
@@ -308,7 +302,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         temp.setType("Number");
         temp.setValue("3");
         stats.add(temp);
-        sendCharacterToCloud("test2", "Sean", "Fate Core", stats, true, false);
+        CloudOperations.sendCharacterToCloud("test2", "dummy2@gmail.com", "Fate Core", stats, true, false);
         stats = new ArrayList<StatData>();
         temp = new StatData();
         temp.setName("Strength");
@@ -320,7 +314,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         temp.setType("Number");
         temp.setValue("30");
         stats.add(temp);
-        sendCharacterToCloud("test3", "Sean", "Pathfinder", stats, false, false);
+        CloudOperations.sendCharacterToCloud("test3", "dummy2@gmail.com", "Pathfinder", stats, false, false);
 		*/
     }
  
@@ -345,16 +339,17 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 			CharacterData importChar = activeCharacters.get(position);
 			UserData importUser;
 			long importID;
-			String email;
+			String email = rightCharDrawerItems.get(position).getOwnerEmail();
+			/* obsolete... want to test before i delete
 			ParseQuery<ParseObject> emailQuery = ParseQuery.getQuery("User");
-			emailQuery.whereEqualTo("UserName", rightCharDrawerItems.get(position).getOwner());
+			emailQuery.whereEqualTo("GPlusEmail", rightCharDrawerItems.get(position).getOwnerEmail());
 			try {
 				email = emailQuery.find().get(0).getString("GPlusEmail");
 			} catch (ParseException e1)	{
 				e1.printStackTrace();
 				email = "blank email";
 			}
-			
+			*/
 			if(!dbData.checkForUser(email))  // if user doesn't exist in internal db, add them to the internal db
 			{
 				importUser = new UserData();
@@ -379,7 +374,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 					dbData.insertStat(stat);
 				}
 			}
-			else
+			else  // TODO:ERIC delete local stats and retrieve updated stats from cloud to update
 			{
 				importID = temp.getId();
 			}
@@ -391,6 +386,8 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 			{
 				fragmentDisplayer(rightMDrawerList, rightMDrawerLayout, rightDrawer, fragment, position);
 			}
+			
+			fillCharacterList();
 		}
 	}
 	
@@ -571,82 +568,62 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 			}
 		}
 	}
-    
-    private void sendCharacterToCloud(String name, String ownerName, String system, List<StatData> stats, boolean sharedFlag, boolean publicFlag)
-    {
-    	deleteOldCharacter(name, ownerName, system);
-    	
-      	ParseObject characterObject = new ParseObject("Character");
-		characterObject.put("Name", name);
-		characterObject.put("Owner", ownerName);
-		characterObject.put("System", system);
-		characterObject.put("Shared", sharedFlag);
-		characterObject.put("Public", publicFlag);
-		
-		for(int i = 0; i < stats.size(); i++)
-		{
-			ParseObject statObject = new ParseObject("Stat");
-			
-			statObject.put("ParentID", characterObject);
-			statObject.put("Name", stats.get(i).getName());
-			statObject.put("Type", stats.get(i).getType());
-			statObject.put("Value", stats.get(i).getValue());
-			statObject.saveInBackground();
-		}
-    }
-
-	private void deleteOldCharacter(String name, String ownerName,
-			String system) {
-		ParseQuery<ParseObject> qResults = ParseQuery.getQuery("Character");
-		qResults.whereEqualTo("Name", name);
-		qResults.whereEqualTo("Owner", ownerName);
-		qResults.whereEqualTo("System", system);
-		qResults.whereEqualTo("Deleted", false);
-		qResults.findInBackground(new FindCallback<ParseObject>() {
-			public void done(List<ParseObject> characterList, ParseException e) {
-				if (e == null && characterList.size() != 0) {
-		            ParseQuery<ParseObject> statQuery = ParseQuery.getQuery("Stat");
-		    		statQuery.whereEqualTo("ParentID", characterList.get(0));
-		    		statQuery.findInBackground(new FindCallback<ParseObject>() {
-		    			public void done(List<ParseObject> statList, ParseException e) {
-		    		        if (e == null) {  // successful query
-		    		            for (ParseObject stat : statList)
-		    		            {
-		    		            	stat.deleteInBackground();
-		    		            }
-		    		        } else {
-		    		            
-		    		        }
-		    		    }
-		    		});
-		    		
-		            characterList.get(0).deleteInBackground();
-		        }
-			}
-		});
-	}
 	
 	private void publicSearchQuery(String searchString) // searches only public charaters, non-public shared characters will not be added
 	{
+		ParseQuery<ParseObject> userQuery = ParseQuery.getQuery("User");
+		userQuery.whereMatches("UserName", searchString, "i");
+		String emails[];
+		try {
+			List<ParseObject> userEmails = userQuery.find();
+			emails = new String[userEmails.size()];
+			for (int i = 0; i < userEmails.size(); i++) {
+				emails[i] = userEmails.get(i).getString("GPlusEmail");
+			}
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+			emails = new String[0];
+		}
+		
 		ParseQuery<ParseObject> ownerQuery = ParseQuery.getQuery("Character");
-		ownerQuery.whereMatches("Owner", searchString, "i");
+		ownerQuery.whereContainedIn("Owner", Arrays.asList(emails));
 		ownerQuery.whereEqualTo("Public", true);
-		ownerQuery.whereNotEqualTo("Owner", dbData.getCurrentUser().getUserName());
+		//ownerQuery.whereNotEqualTo("Owner", dbData.getCurrentUser().getGoogleAccount());
+		
+		ParseQuery<ParseObject> ownerSharedQuery = ParseQuery.getQuery("Character");
+		ownerSharedQuery.whereContainedIn("Owner", Arrays.asList(emails));
+		ownerSharedQuery.whereEqualTo("Shared", true);
+		//ownerSharedQuery.whereNotEqualTo("Owner", dbData.getCurrentUser().getGoogleAccount());
 		
 		ParseQuery<ParseObject> nameQuery = ParseQuery.getQuery("Character");
 		nameQuery.whereMatches("Name", searchString, "i");
 		nameQuery.whereEqualTo("Public", true);
-		nameQuery.whereNotEqualTo("Owner", dbData.getCurrentUser().getUserName());
+		//nameQuery.whereNotEqualTo("Owner", dbData.getCurrentUser().getGoogleAccount());
+		
+		ParseQuery<ParseObject> nameSharedQuery = ParseQuery.getQuery("Character");
+		nameSharedQuery.whereMatches("Name", searchString, "i");
+		nameSharedQuery.whereEqualTo("Shared", true);
+		//nameSharedQuery.whereNotEqualTo("Owner", dbData.getCurrentUser().getGoogleAccount());
 		
 		ParseQuery<ParseObject> systemQuery = ParseQuery.getQuery("Character");
 		systemQuery.whereMatches("System", searchString, "i");
 		systemQuery.whereEqualTo("Public", true);
-		systemQuery.whereNotEqualTo("Owner", dbData.getCurrentUser().getUserName());
+		//systemQuery.whereNotEqualTo("Owner", dbData.getCurrentUser().getGoogleAccount());
+		
+		ParseQuery<ParseObject> systemSharedQuery = ParseQuery.getQuery("Character");
+		systemSharedQuery.whereMatches("System", searchString, "i");
+		systemSharedQuery.whereEqualTo("Shared", true);
+		//systemSharedQuery.whereNotEqualTo("Owner", dbData.getCurrentUser().getGoogleAccount());
+		
+		/* the whereNotEqualTo statements are commented out for testing purposes. in the final version they will make it so your own characters are not included in search results */
 		
 		List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();
 		queries.add(ownerQuery);
+		queries.add(ownerSharedQuery);
 		queries.add(nameQuery);
+		queries.add(nameSharedQuery);
 		queries.add(systemQuery);
+		queries.add(systemSharedQuery);
 		
 		ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
 		mainQuery.findInBackground(new FindCallback<ParseObject>() {
@@ -668,7 +645,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 	private void sharedCharacterQuery()
 	{
 		ParseQuery<ParseObject> buddyQuery = ParseQuery.getQuery("UserFriends");
-		buddyQuery.whereEqualTo("User", dbData.getCurrentUser().getUserName());
+		buddyQuery.whereEqualTo("User", dbData.getCurrentUser().getGoogleAccount());
 		buddyQuery.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> buddyList, ParseException e) {
 				// results has the list of buddies to the user
@@ -696,7 +673,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 		});
 	}
 
-	protected void statQuery(ParseObject character) {
+	protected void statQuery(ParseObject character) {  // method may change for an optimization
 		ParseQuery<ParseObject> statQuery = ParseQuery.getQuery("Stat");
 		statQuery.whereEqualTo("ParentID", character);
 		try {
@@ -708,12 +685,9 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
             	temp.setName(stat.getString("Name"));
             	temp.setType(stat.getString("Type"));
             	temp.setValue(stat.getString("Value"));
-            	// temp.setCharacterId(*characterId*);
-            	// temp.setId(*id*);
-            	// TODO:ERIC to put the character into the database the IDs need to be set
             	stats.add(temp);
             }
-            tempChar.stats = stats;  // not sure how stats work in the internal database, this line may change
+            tempChar.stats = stats;
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
@@ -721,15 +695,9 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 
 	private ArrayList<CharacterDrawerItem> generateCharacterDrawerList(List<ParseObject> characterList)
 	{
-		if (activeCharacters != null)
-		{
-			activeCharacters.clear();
-		}
-		else
-		{
-			activeCharacters = new ArrayList<CharacterData>();
-		}
+		activeCharacters = new ArrayList<CharacterData>(); // clear character list
 		ArrayList<CharacterDrawerItem> temp = new ArrayList<CharacterDrawerItem>();
+		
 		for(ParseObject character : characterList)
 		{
 			tempChar = new CharacterData();
@@ -737,12 +705,9 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 	    	tempChar.setSystem(character.getString("System"));
 	    	tempChar.setPublic(true);
 	    	tempChar.setShared(character.getBoolean("Shared"));
-	    	// tempChar.setOwnerId(dbData.getUser(character.getString("Owner")).getId());
-	    	// tempChar.setId(*id*);
-	    	// TODO:ERIC need to set IDs to put the character into the internal database
-		    statQuery(character);
+		    statQuery(character);  // this may be left out here for optimization (stats would be retrieved at a later point)
 		    activeCharacters.add(tempChar);
-		    temp.add(new CharacterDrawerItem(tempChar, character.getString("Owner")));
+		    temp.add(new CharacterDrawerItem(tempChar, character.getString("OwnerName"), character.getString("Owner")));
 		}
 		
 		return temp;
