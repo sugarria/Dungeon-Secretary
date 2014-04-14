@@ -16,6 +16,12 @@
     </group>
     
     <item
+        android:id="@+id/action_game_system"
+        android:orderInCategory="10"
+        android:showAsAction="never"
+        android:title="Change Game System"/>  
+    
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"

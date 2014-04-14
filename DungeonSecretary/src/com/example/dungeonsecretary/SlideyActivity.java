@@ -531,6 +531,13 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         	}
         	return true;
         }
+        case R.id.action_game_system:
+        {
+        	FragmentManager fm = getSupportFragmentManager();
+        	ChangeSystemDialog csys = new ChangeSystemDialog();
+        	csys.addDialogListener(this);
+        	csys.show(fm, "fragment_change_system");
+        }
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -601,6 +608,10 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
     public void onDialogFinish(int dialogId) {
 		switch(dialogId){
 			case R.id.dialog_new_character:
+			{
+				fillCharacterList();
+			}
+			case R.id.dialog_change_system:
 			{
 				fillCharacterList();
 			}
