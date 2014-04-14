@@ -27,6 +27,7 @@ public class CloudOperations {
 		characterObject.put("Shared", sharedFlag);
 		characterObject.put("Public", publicFlag);
 		characterObject.put("OwnerName", ownerName);
+		characterObject.saveInBackground();
 		
 		Map<Long, ParseObject> idStatObjectMap = new HashMap<Long, ParseObject>();
 		for(int i = 0; i < stats.size(); i++)

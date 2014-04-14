@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.dungeonsecretary.adapter.StatListAdapter;
+import com.example.dungeonsecretary.cloud.CloudOperations;
 import com.example.dungeonsecretary.interfaces.DialogListener;
 import com.example.dungeonsecretary.model.CharacterData;
 import com.example.dungeonsecretary.model.StatData;
@@ -61,8 +62,16 @@ public class ChangeSystemDialog extends DialogFragment implements OnClickListene
 	    	{
 	    		String newSystem = mEditSystem.getText().toString();
 	    		CharacterData ch = dbData.getCurrentCharacter();
+	    		if (ch.getOwnerId() == dbData.getCurrentUser().getId())
+	    		{
+		    		CloudOperations.deleteCharacterFromCloud(ch.getName(), dbData.getCurrentUser().getGoogleAccount(), ch.getSystem());
+	    		}
 	    		ch.setSystem(newSystem);
 	    		dbData.updateCharacter(ch);
+	    		if (ch.getOwnerId() == dbData.getCurrentUser().getId())
+	    		{
+	    			CloudOperations.sendCharacterToCloud(ch.getName(), dbData.getCurrentUser().getId(), ch.getSystem(), ch.getShared(), ch.getPublic(), getActivity().getApplicationContext());
+	    		}
 	    		callDialogListeners();
 	    		this.dismiss();
 	    		
