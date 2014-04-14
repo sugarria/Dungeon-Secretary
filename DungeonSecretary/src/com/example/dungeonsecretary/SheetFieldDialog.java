@@ -49,12 +49,25 @@ public class SheetFieldDialog extends DialogFragment implements OnClickListener{
 		//get the inputs
        View view = inflater.inflate(R.layout.fragment_sheet_field, container);
        mEditLabel = (EditText) view.findViewById(R.id.txt_label);
-       statSpinner = (Spinner) view.findViewById(R.id.select_stat);
-       //clear the edittext
-       mEditLabel.setText("");
+       statSpinner = (Spinner) view.findViewById(R.id.select_stat);       
+
+       dbData = DungeonDataSource.getInstance(getActivity().getApplicationContext());
+       
+       Bundle bundle = this.getArguments();
+       index = (Long) bundle.get("index");
+       charId = dbData.getCurrentCharacter().getId();
+       
+       //If there was something in that slot before, record what it was
+       long initialStat = -1;
+       String initialText = "";
+       SheetFieldData previous = dbData.getSheetField(charId, index);
+       if(previous != null)
+       {
+    	   initialText = previous.getLabel(); 
+    	   initialStat = previous.getStatId();
+       }
        
        //getDialog().setTitle("Create New Character");
-       dbData = DungeonDataSource.getInstance(getActivity().getApplicationContext());
        
        //get the buttons and set listeners
        Button btn_label= (Button) view.findViewById(R.id.btn_set_label);
@@ -64,22 +77,34 @@ public class SheetFieldDialog extends DialogFragment implements OnClickListener{
        btn_stat.setOnClickListener(this);
        btn_clear.setOnClickListener(this);
        
-       Bundle bundle = this.getArguments();
-       //Fill in the spinner
-       index = (Long) bundle.get("index");
+       //fill in the spinner
        charId = dbData.getCurrentCharacter().getId();
        //get all the stats for the spinner
        List<StatData> stats = dbData.getAllStatsForCharacter(charId);
        List<String> statNames = new ArrayList<String>();
+       int indexOfPrevious = -1;
        for(int i = 0; i < stats.size(); i++)
        {
     	   statNames.add(stats.get(i).getName());
+    	   if(stats.get(i).getId() == initialStat)
+    	   {
+    		   indexOfPrevious = i;
+    	   }
        }
        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(getActivity(),
     	        android.R.layout.simple_spinner_dropdown_item);//, statNames);
        adapter.addAll(statNames);
-       statSpinner.setAdapter(adapter);
 
+
+       statSpinner.setAdapter(adapter);  
+       
+       //set previous values
+       mEditLabel.setText(initialText);
+       if(indexOfPrevious != -1)
+       {
+    	   statSpinner.setSelection(indexOfPrevious);
+       }
+      
         return view;
     }
 	

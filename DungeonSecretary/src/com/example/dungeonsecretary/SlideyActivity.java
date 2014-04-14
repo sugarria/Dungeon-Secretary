@@ -481,10 +481,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
     	Fragment fragment;
         switch (item.getItemId()) {
         case R.id.action_settings:
-        	fragment = new CharSheetFragment();
-			FragmentManager fragmentManager = getSupportFragmentManager();
-			fragmentManager.beginTransaction().replace(R.id.frame_container,  fragment).commit();
-            return true;
+        	 return true;
         case R.id.action_open_list:
         {
         	fragment = new StatListPageActivity();
