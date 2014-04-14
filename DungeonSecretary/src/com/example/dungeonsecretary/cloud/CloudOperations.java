@@ -1,10 +1,13 @@
 package com.example.dungeonsecretary.cloud;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 
+import com.example.dungeonsecretary.model.SheetFieldData;
 import com.example.dungeonsecretary.model.StatData;
 import com.example.dungeonsecretary.model.UserData;
 import com.example.dungeonsecretary.sql.DungeonDataSource;
@@ -14,7 +17,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 public class CloudOperations {
-	public static void sendCharacterToCloud(String name, String ownerEmail, String ownerName, String system, List<StatData> stats, boolean sharedFlag, boolean publicFlag) {
+	public static void sendCharacterToCloud(String name, String ownerEmail, String ownerName, String system, List<StatData> stats, List<SheetFieldData> sheetFields, boolean sharedFlag, boolean publicFlag) {
     	deleteCharacterFromCloud(name, ownerEmail, system);
     	
       	ParseObject characterObject = new ParseObject("Character");
@@ -24,6 +27,8 @@ public class CloudOperations {
 		characterObject.put("Shared", sharedFlag);
 		characterObject.put("Public", publicFlag);
 		characterObject.put("OwnerName", ownerName);
+		
+		Map<Long, ParseObject> idStatObjectMap = new HashMap<Long, ParseObject>();
 		for(int i = 0; i < stats.size(); i++)
 		{
 			ParseObject statObject = new ParseObject("Stat");
@@ -33,19 +38,33 @@ public class CloudOperations {
 			statObject.put("Type", stats.get(i).getType());
 			statObject.put("Value", stats.get(i).getValue());
 			statObject.saveInBackground();
+			
+			idStatObjectMap.put(stats.get(i).getId(), statObject);
+		}
+		for (int i = 0; i < sheetFields.size(); i++) {
+			ParseObject sheetFieldObject = new ParseObject("SheetField");
+			sheetFieldObject.put("Character", characterObject);
+			if(sheetFields.get(i).getStatId() >= 0) {
+				sheetFieldObject.put("Stat", idStatObjectMap.get(sheetFields.get(i).getStatId()));
+			}
+			sheetFieldObject.put("Index", sheetFields.get(i).getIndex());
+			if(sheetFields.get(i).getLabel() != null) {
+				sheetFieldObject.put("Label", sheetFields.get(i).getLabel());
+			}
+			sheetFieldObject.saveInBackground();
 		}
     }
 	
 	public static void sendCharacterToCloud(String name, long ownerId, String system, boolean sharedFlag, boolean publicFlag, Context context) {
 		List<StatData> stats;
+		List<SheetFieldData> sheetFields;
 		DungeonDataSource db = DungeonDataSource.getInstance(context);
 		UserData owner = db.getUser(ownerId);
 		
-		deleteCharacterFromCloud(name, owner.getGoogleAccount(), system);
-		
 		stats = db.getAllStatsForCharacter(db.getCharacter(ownerId, name).getId());
+		sheetFields = db.getAllFieldsForCharacter(db.getCharacter(ownerId, name).getId());
 		
-		sendCharacterToCloud(name, owner.getGoogleAccount(), owner.getUserName(), system, stats, sharedFlag, publicFlag);
+		sendCharacterToCloud(name, owner.getGoogleAccount(), owner.getUserName(), system, stats, sheetFields, sharedFlag, publicFlag);
 	}
 	
 	public static void deleteCharacterFromCloud(String name, String ownerEmail, String system) {
@@ -66,11 +85,24 @@ public class CloudOperations {
 		    		            	stat.deleteInBackground();
 		    		            }
 		    		        } else {
-		    		            
+		    		            e.printStackTrace();
 		    		        }
 		    		    }
 		    		});
 		    		
+		    		ParseQuery<ParseObject> sheetFieldQuery = ParseQuery.getQuery("SheetField");
+		    		sheetFieldQuery.whereEqualTo("Character", characterList.get(0));
+		    		sheetFieldQuery.findInBackground(new FindCallback<ParseObject>() {
+		    			public void done(List<ParseObject> sheetFieldList, ParseException e) {
+		    				if (e == null) {
+		    					for (ParseObject sheetField : sheetFieldList) {
+		    						sheetField.deleteInBackground();
+		    					}
+		    				} else {
+		    					e.printStackTrace();
+		    				}
+		    			}
+		    		});
 		            characterList.get(0).deleteInBackground();
 		        }
 			}
@@ -110,6 +142,7 @@ public class CloudOperations {
 				ParseObject buddyPair = new ParseObject("UserFriends");
 				buddyPair.put("User", gAccountEmail);
 				buddyPair.put("IsFriendsWith", db.getCurrentUser().getGoogleAccount());
+				buddyPair.saveInBackground();
 			}
 		} catch (ParseException e1) {
 			e1.printStackTrace();

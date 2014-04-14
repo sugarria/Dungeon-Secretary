@@ -3,13 +3,16 @@ package com.example.dungeonsecretary;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.example.dungeonsecretary.adapter.CharacterDrawerListAdapter;
 import com.example.dungeonsecretary.cloud.CloudOperations;
 import com.example.dungeonsecretary.interfaces.DialogListener;
 import com.example.dungeonsecretary.model.CharacterData;
 import com.example.dungeonsecretary.model.CharacterDrawerItem;
+import com.example.dungeonsecretary.model.SheetFieldData;
 import com.example.dungeonsecretary.model.StatData;
 import com.example.dungeonsecretary.model.UserData;
 import com.example.dungeonsecretary.sql.DungeonDataSource;
@@ -49,7 +52,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 	private ActionBarDrawerToggle leftMDrawerToggle, rightMDrawerToggle;
 	private DungeonDataSource dbData;
 	private LinearLayout leftDrawer, rightDrawer;
-	private Button btnNewChar;
+	private Button btnNewChar, btnAddBuddy;
 	
 	//nav drawer title
 	private CharSequence leftMDrawerTitle, rightMDrawerTitle;
@@ -67,7 +70,6 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 	private List<CharacterData> activeCharacters;
 	private ArrayList<CharacterDrawerItem> rightCharDrawerItems;
 	private CharacterDrawerListAdapter charRightAdapter;
-	private String query;
 	private CharacterData tempChar;
 	private String[] buddies;
 	private boolean dirtySearch = false;
@@ -211,9 +213,12 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
             // on first time display view for first nav item
             displayView(-1);
         }
-		
+        
         btnNewChar = (Button)findViewById(R.id.btn_drawer_new_char);
         btnNewChar.setOnClickListener(this);
+        
+        btnAddBuddy = (Button)findViewById(R.id.btn_drawer_add_buddy);
+        btnAddBuddy.setOnClickListener(this);
         
         SearchView searchView = (SearchView)findViewById(R.id.right_search_widget);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -317,12 +322,6 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         CloudOperations.sendCharacterToCloud("test3", "dummy2@gmail.com", "Pathfinder", stats, false, false);
 		*/
     }
- 
-	@Override
-	protected void onNewIntent(Intent intent) {
-		query = intent.getStringExtra(SearchManager.QUERY);
-		Log.d("bacon", query);
-	}
 	
 	private class SlideMenuClickListener implements ListView.OnItemClickListener
 	{
@@ -368,15 +367,75 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 			{
 				dbData.insertCharacter(importChar);
 				importID = dbData.getCharacter(importUser.getId(), importChar.getName()).getId();
-				for(StatData stat : importChar.stats)
-				{
-					stat.setCharacterId(importID);
-					dbData.insertStat(stat);
-				}
 			}
-			else  // TODO:ERIC delete local stats and retrieve updated stats from cloud to update
+			else // delete local stats for the character and download stats from cloud to update
 			{
 				importID = temp.getId();
+				
+				// delete local stats
+				List<StatData> tempStats = dbData.getAllStatsForCharacter(importID);
+				for (StatData stat : tempStats) {
+					dbData.deleteStat(stat.getId());
+				}
+				
+				// delete local sheet fields
+				List<SheetFieldData> tempFields = dbData.getAllFieldsForCharacter(importID);
+				for (SheetFieldData field : tempFields)	{
+					dbData.deleteField(field.getCharId(), field.getIndex());
+				}
+			}
+			
+			/*
+			// import cloud stats
+			for(StatData stat : importChar.stats) {
+				stat.setCharacterId(importID);
+				dbData.insertStat(stat);
+			}
+			*/
+			
+			// search for sheet fields on the cloud and import
+			// search for the character on the cloud
+			ParseQuery<ParseObject> charQuery = ParseQuery.getQuery("Character");
+			charQuery.whereEqualTo("Name", temp.getName());
+			charQuery.whereEqualTo("System", temp.getSystem());
+			charQuery.whereEqualTo("Owner", email);
+			try {
+				List<ParseObject> chars = charQuery.find();
+				
+				// retrieve stats from cloud and add locally
+				List<ParseObject> stats = statQuery(chars.get(0));
+				Map<String, Long> statIdMap = new HashMap<String, Long>();
+				for(ParseObject parseStat : stats) {
+					StatData stat = new StatData();
+					stat.setCharacterId(importID);
+					stat.setName(parseStat.getString("Name"));
+					stat.setType(parseStat.getString("Type"));
+					stat.setValue(parseStat.getString("Value"));
+					statIdMap.put(parseStat.getObjectId(), dbData.insertStat(stat));
+				}
+				
+				// retrieve all the fields from the cloud and add locally
+				ParseQuery<ParseObject> fieldQuery = ParseQuery.getQuery("SheetField");
+				fieldQuery.whereEqualTo("Character", chars.get(0));
+				try {
+					List<ParseObject> fieldList = fieldQuery.find();
+					for(ParseObject field : fieldList) {	// add each stat to the local database
+						SheetFieldData tempField = new SheetFieldData();
+						tempField.setCharId(importID);
+						tempField.setIndex(field.getLong("Index"));
+						tempField.setLabel(field.getString("Label"));
+						if (statIdMap.get(field.getString("Stat")) == null) {
+							tempField.setStatId(DungeonDataSource.dbNullNum);
+						} else {
+							tempField.setStatId(statIdMap.get(field.getString("Stat")));
+						}
+						dbData.insertSheetField(tempField);
+					}
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
 			}
 			
 			// setup statlist fragment
@@ -560,6 +619,15 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 	    		break;
 	    		
 			}
+			case R.id.btn_drawer_add_buddy:
+			{
+				FragmentManager fm = getSupportFragmentManager();
+				AddBuddyDialog dlog = new AddBuddyDialog();
+				dlog.addDialogListener(this);
+				dlog.show(fm, "fragment_add_buddy");
+				Log.d("bacon", "I am killin' it");
+				break;
+			}
 		}		
 	}
     
@@ -676,12 +744,13 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 		});
 	}
 
-	protected void statQuery(ParseObject character) {  // method may change for an optimization
+	private List<ParseObject> statQuery(ParseObject character) {  // method may change for an optimization
 		ParseQuery<ParseObject> statQuery = ParseQuery.getQuery("Stat");
 		statQuery.whereEqualTo("ParentID", character);
+		List<ParseObject> statList;
 		try {
-			List<ParseObject> statList = statQuery.find();
-			List<StatData> stats = new ArrayList<StatData>();
+			statList = statQuery.find();
+			/*
             for (ParseObject stat : statList)
             {
             	StatData temp = new StatData();
@@ -691,9 +760,12 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
             	stats.add(temp);
             }
             tempChar.stats = stats;
+            */
 		} catch (ParseException e1) {
 			e1.printStackTrace();
+			statList = new ArrayList<ParseObject>();
 		}
+		return statList;
 	}
 
 	private ArrayList<CharacterDrawerItem> generateCharacterDrawerList(List<ParseObject> characterList)
@@ -708,7 +780,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 	    	tempChar.setSystem(character.getString("System"));
 	    	tempChar.setPublic(true);
 	    	tempChar.setShared(character.getBoolean("Shared"));
-		    statQuery(character);  // this may be left out here for optimization (stats would be retrieved at a later point)
+		    //statQuery(character);  // this may be left out here for optimization (stats would be retrieved at a later point)
 		    activeCharacters.add(tempChar);
 		    temp.add(new CharacterDrawerItem(tempChar, character.getString("OwnerName"), character.getString("Owner")));
 		}

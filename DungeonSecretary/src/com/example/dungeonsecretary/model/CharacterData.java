@@ -14,7 +14,7 @@ public class CharacterData {
 	private boolean isPublic;
 	private boolean isShared;
 	
-	public List<StatData> stats;
+	//public List<StatData> stats;
 	
 	public long getId()
 	{

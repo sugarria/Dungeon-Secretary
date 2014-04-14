@@ -189,13 +189,12 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
     		editStat.setValue(statEquation);
     		dbData.updateStat(editStat);
 
-    		// update character to cloud every time a stat is updated; currently uploads all characters as public
-    		// TODO:ERIC change to accurate public value
+    		// update character to cloud every time a stat is updated
     		CharacterData thisChar = dbData.getCharacter(charId);
-    		if (dbData.getCurrentUser().getId() == thisChar.getOwnerId()/* && (thisChar.getShared() || thisChar.getPublic())*/)
+    		if (dbData.getCurrentUser().getId() == thisChar.getOwnerId() && (thisChar.getShared() || thisChar.getPublic()))
     		{
     			CloudOperations.sendCharacterToCloud(thisChar.getName(), dbData.getCurrentUser().getId(), thisChar.getSystem(),
-    												 thisChar.getShared(), /*thisChar.getPublic()*/true, getActivity().getApplicationContext());
+    												 thisChar.getShared(), thisChar.getPublic(), getActivity().getApplicationContext());
     		}
     		
     		callDialogListeners();
@@ -212,6 +211,15 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 		case R.id.btn_edit_delete:
 		{
 			//do nothing
+			/* if this changes later to actually delete the stat, include this block of code
+			// update character to cloud every time a stat is deleted
+    		CharacterData thisChar = dbData.getCharacter(charId);
+    		if (dbData.getCurrentUser().getId() == thisChar.getOwnerId() && (thisChar.getShared() || thisChar.getPublic()))
+    		{
+    			CloudOperations.sendCharacterToCloud(thisChar.getName(), dbData.getCurrentUser().getId(), thisChar.getSystem(),
+    												 thisChar.getShared(), thisChar.getPublic(), getActivity().getApplicationContext());
+    		} 
+			*/
 			this.dismiss();
 			break;
 		}

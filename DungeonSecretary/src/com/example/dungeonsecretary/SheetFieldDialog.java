@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.dungeonsecretary.adapter.StatListAdapter;
+import com.example.dungeonsecretary.cloud.CloudOperations;
 import com.example.dungeonsecretary.interfaces.DialogListener;
 import com.example.dungeonsecretary.model.CharacterData;
 import com.example.dungeonsecretary.model.SheetFieldData;
@@ -97,6 +98,14 @@ public class SheetFieldDialog extends DialogFragment implements OnClickListener{
 	    		fieldData.setStatId(DungeonDataSource.dbNullNum);
 	    		dbData.insertSheetField(fieldData);
 	
+	    		// update character to cloud every time a stat is updated
+	    		CharacterData thisChar = dbData.getCharacter(charId);
+	    		if (dbData.getCurrentUser().getId() == thisChar.getOwnerId() && (thisChar.getShared() || thisChar.getPublic()))
+	    		{
+	    			CloudOperations.sendCharacterToCloud(thisChar.getName(), dbData.getCurrentUser().getId(), thisChar.getSystem(),
+	    												 thisChar.getShared(), thisChar.getPublic(), getActivity().getApplicationContext());
+	    		}
+	    		
 	    		callDialogListeners();
 	    		
 	    		this.dismiss();
@@ -114,6 +123,15 @@ public class SheetFieldDialog extends DialogFragment implements OnClickListener{
 	    		fieldData.setLabel("");
 	    		fieldData.setStatId(stat.getId());
 	    		dbData.insertSheetField(fieldData);
+	    		
+	    		// update character to cloud every time a sheetField is updated
+	    		CharacterData thisChar = dbData.getCharacter(charId);
+	    		if (dbData.getCurrentUser().getId() == thisChar.getOwnerId() && (thisChar.getShared() || thisChar.getPublic()))
+	    		{
+	    			CloudOperations.sendCharacterToCloud(thisChar.getName(), dbData.getCurrentUser().getId(), thisChar.getSystem(),
+	    												 thisChar.getShared(), thisChar.getPublic(), getActivity().getApplicationContext());
+	    		}
+	    		
 	    		callDialogListeners();
 				this.dismiss();
 				break;
@@ -129,6 +147,14 @@ public class SheetFieldDialog extends DialogFragment implements OnClickListener{
 	    		fieldData.setStatId(DungeonDataSource.dbNullNum);
 	    		dbData.insertSheetField(fieldData);
 	
+	    		// update character to cloud every time a stat is updated
+	    		CharacterData thisChar = dbData.getCharacter(charId);
+	    		if (dbData.getCurrentUser().getId() == thisChar.getOwnerId() && (thisChar.getShared() || thisChar.getPublic()))
+	    		{
+	    			CloudOperations.sendCharacterToCloud(thisChar.getName(), dbData.getCurrentUser().getId(), thisChar.getSystem(),
+	    												 thisChar.getShared(), thisChar.getPublic(), getActivity().getApplicationContext());
+	    		}
+	    		
 	    		callDialogListeners();
 	    		
 	    		this.dismiss();

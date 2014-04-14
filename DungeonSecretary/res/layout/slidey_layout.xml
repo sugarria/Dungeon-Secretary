@@ -22,10 +22,10 @@
     android:background="@color/list_background" >
 
         <Button
-         android:id="@+id/btn_drawer_new_char"
-         android:layout_width="fill_parent"
-         android:layout_height="wrap_content"
-         android:text="New Character" />
+        android:id="@+id/btn_drawer_new_char"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="New Character" />
 	        
 	    <ListView
         android:id="@+id/drawer_left_list"
@@ -47,20 +47,18 @@
     android:orientation="vertical"
     android:background="@color/list_background" >
 	    
-        <!--
-        <item
-        android:id="@+id/right_search_widget"
-        android:actionViewClass="android.widget.SearchView"
-        android:showAsAction="always"
-        android:title="Search" >
-        </item>
-        -->
+		<Button 
+		android:id="@+id/btn_drawer_add_buddy"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="Add Buddy" />
         
+		<!-- TODO:ERIC change imeOptions to "actionSearch" -->
         <SearchView
         android:id="@+id/right_search_widget"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:iconifiedByDefault="true"
+        android:iconifiedByDefault="false"
         android:imeOptions="normal"
         android:inputType="text"
         android:queryHint="Search Public Characters" >

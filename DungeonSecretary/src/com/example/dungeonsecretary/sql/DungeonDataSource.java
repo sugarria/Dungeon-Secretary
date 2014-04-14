@@ -272,7 +272,7 @@ public class DungeonDataSource {
 				MySQLiteHelper.CHARACTERS_COLUMN_ID + " = " + id, null);		
 	}
 	
-	public void insertStat(StatData stat)
+	public long insertStat(StatData stat)
 	{
 		//duplication/error checking
 		//get data from character and insert it
@@ -283,6 +283,7 @@ public class DungeonDataSource {
 		values.put(MySQLiteHelper.STATS_COLUMN_VALUE, stat.getValue());
 		long insertId = database.insert(MySQLiteHelper.TABLE_STATS,  null,  values);
 		stat.setId(insertId);
+		return insertId;
 	}
 	
 	public void updateStat(StatData stat)

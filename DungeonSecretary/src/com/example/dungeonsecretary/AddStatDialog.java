@@ -140,12 +140,11 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
     		dbData.insertStat(newStat);
     		
     		// update character to cloud every time a stat is created; currently uploads all characters as public
-    		// TODO:ERIC change to accurate public value
     		CharacterData thisChar = dbData.getCharacter(charId);
-    		if (dbData.getCurrentUser().getId() == thisChar.getOwnerId()/* && (thisChar.getShared() || thisChar.getPublic())*/)
+    		if (dbData.getCurrentUser().getId() == thisChar.getOwnerId() && (thisChar.getShared() || thisChar.getPublic()))
     		{
     			CloudOperations.sendCharacterToCloud(thisChar.getName(), dbData.getCurrentUser().getId(), thisChar.getSystem(),
-    											 	 thisChar.getShared(), /*thisChar.getPublic()*/true, getActivity().getApplicationContext());
+    											 	 thisChar.getShared(), thisChar.getPublic(), getActivity().getApplicationContext());
     		}
     		
     		callDialogListeners();
