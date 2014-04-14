@@ -477,8 +477,6 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
     	//Put fragment out here because for some reason inside the case is not a local variable...
     	Fragment fragment;
         switch (item.getItemId()) {
-        case R.id.action_settings:
-        	 return true;
         case R.id.action_open_list:
         {
         	fragment = new StatListPageActivity();
@@ -491,6 +489,46 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         	fragment = new CharSheetFragment();
         	FragmentManager fMan = getSupportFragmentManager();
         	fMan.beginTransaction().replace(R.id.frame_container, fragment).commit();   
+        	return true;
+        }
+        case R.id.select_private:
+        {
+        	//don't waste time updating the db if we don't need to
+        	if(!item.isChecked())
+        	{
+        		//private is both shared and public false
+        		item.setChecked(true);
+        		CharacterData currentChar = dbData.getCurrentCharacter();
+        		currentChar.setShared(false);
+        		currentChar.setPublic(false);
+        		dbData.updateCharacter(currentChar);
+        	}
+        	return true;
+        }
+        case R.id.select_shared:
+        {
+        	if(!item.isChecked())
+        	{
+        		//private is both shared and public false
+        		item.setChecked(true);
+        		CharacterData currentChar = dbData.getCurrentCharacter();
+        		currentChar.setShared(true);
+        		currentChar.setPublic(false);
+        		dbData.updateCharacter(currentChar);
+        	}
+        	return true;
+        }
+        case R.id.select_public:
+        {
+        	if(!item.isChecked())
+        	{
+        		//private is both shared and public false
+        		item.setChecked(true);
+        		CharacterData currentChar = dbData.getCurrentCharacter();
+        		currentChar.setShared(true);
+        		currentChar.setPublic(true);
+        		dbData.updateCharacter(currentChar);
+        	}
         	return true;
         }
         default:

@@ -6,6 +6,15 @@
         android:showAsAction="always"
         android:title="Go to Stat List"/>
     
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/select_private"
+              android:title="Private" />
+        <item android:id="@+id/select_shared"
+              android:title="Shared" />
+        <item android:id="@+id/select_public"
+              android:title="Public" />
+    </group>
+    
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

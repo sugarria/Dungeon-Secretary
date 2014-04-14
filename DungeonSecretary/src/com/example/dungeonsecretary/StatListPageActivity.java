@@ -34,6 +34,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -173,6 +174,19 @@ public class StatListPageActivity extends Fragment implements OnClickListener, D
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		menu.clear();
         inflater.inflate(R.menu.stat_list_menu, menu);
+      //Set the initial values of the check boxes
+        //Only the most visible option will be checked (so if public, don't check shared, etc)
+        CharacterData currentChar = dbData.getCurrentCharacter();
+        if(currentChar.getPublic())
+        {
+        	menu.findItem(R.id.select_public).setChecked(true);
+        } else if(currentChar.getShared())         
+        {
+        	menu.findItem(R.id.select_shared).setChecked(true);
+        } else
+        {
+        	menu.findItem(R.id.select_private).setChecked(true);
+        }
     }
 
 }
