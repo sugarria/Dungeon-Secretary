@@ -536,11 +536,6 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
     	//Put fragment out here because for some reason inside the case is not a local variable...
     	Fragment fragment;
         switch (item.getItemId()) {
-        case R.id.action_settings:
-        	fragment = new CharSheetFragment();
-			FragmentManager fragmentManager = getSupportFragmentManager();
-			fragmentManager.beginTransaction().replace(R.id.frame_container,  fragment).commit();
-            return true;
         case R.id.action_open_list:
         {
         	fragment = new StatListPageActivity();
@@ -554,6 +549,53 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         	FragmentManager fMan = getSupportFragmentManager();
         	fMan.beginTransaction().replace(R.id.frame_container, fragment).commit();   
         	return true;
+        }
+        case R.id.select_private:
+        {
+        	//don't waste time updating the db if we don't need to
+        	if(!item.isChecked())
+        	{
+        		//private is both shared and public false
+        		item.setChecked(true);
+        		CharacterData currentChar = dbData.getCurrentCharacter();
+        		currentChar.setShared(false);
+        		currentChar.setPublic(false);
+        		dbData.updateCharacter(currentChar);
+        	}
+        	return true;
+        }
+        case R.id.select_shared:
+        {
+        	if(!item.isChecked())
+        	{
+        		//private is both shared and public false
+        		item.setChecked(true);
+        		CharacterData currentChar = dbData.getCurrentCharacter();
+        		currentChar.setShared(true);
+        		currentChar.setPublic(false);
+        		dbData.updateCharacter(currentChar);
+        	}
+        	return true;
+        }
+        case R.id.select_public:
+        {
+        	if(!item.isChecked())
+        	{
+        		//private is both shared and public false
+        		item.setChecked(true);
+        		CharacterData currentChar = dbData.getCurrentCharacter();
+        		currentChar.setShared(true);
+        		currentChar.setPublic(true);
+        		dbData.updateCharacter(currentChar);
+        	}
+        	return true;
+        }
+        case R.id.action_game_system:
+        {
+        	FragmentManager fm = getSupportFragmentManager();
+        	ChangeSystemDialog csys = new ChangeSystemDialog();
+        	csys.addDialogListener(this);
+        	csys.show(fm, "fragment_change_system");
         }
         default:
             return super.onOptionsItemSelected(item);
@@ -634,6 +676,10 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
     public void onDialogFinish(int dialogId) {
 		switch(dialogId){
 			case R.id.dialog_new_character:
+			{
+				fillCharacterList();
+			}
+			case R.id.dialog_change_system:
 			{
 				fillCharacterList();
 			}

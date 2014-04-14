@@ -25,7 +25,6 @@
     <string name="stat_type">Type</string>
     <string name="put_equation">Put Equation</string>
     <string name="plus">+</string>
-    <string name="select"></string>
     
     <!-- for button -->
      <string name="btn_cancel">Cancel</string>

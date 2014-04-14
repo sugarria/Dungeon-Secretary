@@ -43,7 +43,6 @@
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1.6"
 	        android:entries="@array/math_operation"
-        	android:prompt="@string/select"
 	        android:textSize="10sp" />
 	    
 	    <EditText

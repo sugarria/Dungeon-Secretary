@@ -143,6 +143,19 @@ public class CharSheetFragment extends Fragment implements OnClickListener, Dial
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		menu.clear();
         inflater.inflate(R.menu.char_sheet_menu, menu);
+        //Set the initial values of the check boxes
+        //Only the most visible option will be checked (so if public, don't check shared, etc)
+        CharacterData currentChar = dbData.getCurrentCharacter();
+        if(currentChar.getPublic())
+        {
+        	menu.findItem(R.id.select_public).setChecked(true);
+        } else if(currentChar.getShared())         
+        {
+        	menu.findItem(R.id.select_shared).setChecked(true);
+        } else
+        {
+        	menu.findItem(R.id.select_private).setChecked(true);
+        }
     }
  
     @Override

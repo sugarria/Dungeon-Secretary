@@ -6,11 +6,11 @@
 
     <TextView
         android:id="@+id/lbl_new_character_name" android:text="Character Name:" 
-        android:layout_width="180dp" android:layout_height="wrap_content" />
+        android:layout_width="wrap_content" android:layout_height="wrap_content" />
       
     <TextView
-        android:id="@+id/lbl_new_character_system" android:text="Game System:" 
-        android:layout_width="180dp" android:layout_height="wrap_content"
+        android:id="@+id/lbl_char_to_copy" android:text="Base Character: " 
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_alignParentRight="true" />
         
     <EditText
@@ -19,12 +19,13 @@
         android:layout_height="wrap_content" 
         android:layout_below="@id/lbl_new_character_name"/>
     
-    <EditText
-        android:id="@+id/txt_new_character_system"
-        android:layout_width="180dp"  
-        android:layout_height="wrap_content" 
-        android:layout_below="@id/lbl_new_character_system"
-        android:layout_alignParentRight="true"/>
+    <Spinner
+        android:id="@+id/spin_char_to_copy"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lbl_char_to_copy"
+        android:layout_alignParentRight="true" />  
+    
    
      <Button
          android:id="@+id/btn_new_char_cancel"
@@ -37,8 +38,7 @@
          android:id="@+id/btn_new_char_save"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:layout_weight="1"
-         android:layout_below="@id/txt_new_character_system"
+         android:layout_below="@id/spin_char_to_copy"
          android:layout_alignParentRight="true"
          android:text="@string/btn_save" />
 
