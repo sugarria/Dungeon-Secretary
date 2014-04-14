@@ -20,9 +20,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.view.inputmethod.EditorInfo;
@@ -30,9 +32,9 @@ import android.view.inputmethod.EditorInfo;
 
 public class NewCharacterDialog extends DialogFragment implements OnClickListener{
 	private EditText mEditName;
-	private EditText mEditSystem;
 	private String charName;
 	private String system;
+	private Spinner charSpinner;
 	private List<DialogListener> listeners;
 	DungeonDataSource dbData;
 	long charId;
@@ -45,7 +47,7 @@ public class NewCharacterDialog extends DialogFragment implements OnClickListene
             Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.fragment_new_character, container);
        mEditName = (EditText) view.findViewById(R.id.txt_new_character_name);
-       mEditSystem = (EditText) view.findViewById(R.id.txt_new_character_system);
+       charSpinner = (Spinner) view.findViewById(R.id.spin_char_to_copy); 
        
        getDialog().setTitle("Create New Character");
        dbData = DungeonDataSource.getInstance(getActivity().getApplicationContext());
@@ -55,8 +57,20 @@ public class NewCharacterDialog extends DialogFragment implements OnClickListene
        btn_save.setOnClickListener(this);
        btn_cancel.setOnClickListener(this);
        
-       //input = new EditText(getActivity());
-
+       //fill in the spinner
+       List<CharacterData> chars = dbData.getAllCharacters();
+       List<String> charNames = new ArrayList<String>();
+       charNames.add("Blank");
+       for(int i = 0; i < chars.size(); i++)
+       {
+    	   charNames.add(chars.get(i).getName());
+       }
+       ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(getActivity(),
+   	        android.R.layout.simple_spinner_dropdown_item);
+       adapter.addAll(charNames);
+       charSpinner.setAdapter(adapter);
+       charSpinner.setSelection(0);
+       
         return view;
     }
 	
@@ -65,16 +79,25 @@ public class NewCharacterDialog extends DialogFragment implements OnClickListene
 		switch(v.getId()){
 			case R.id.btn_new_char_save:
 	    	{
-	    		charName = mEditName.getText().toString();
-	    		system = mEditSystem.getText().toString();
-	    		UserData owner = dbData.getCurrentUser();
-	    		CharacterData newChar = new CharacterData();	
-	    		newChar.setName(charName);
-	    		newChar.setOwnerId(owner.getId());
-	    		newChar.setSystem(system);
-	    		newChar.setPublic(true);
-	    		newChar.setShared(true);
-	    		dbData.insertCharacter(newChar);
+	    		String baseCharName = charSpinner.getSelectedItem().toString();	    		
+	    		if(baseCharName.equals("Blank"))
+	    		{
+	    			CharacterData newChar = new CharacterData();
+		    		charName = mEditName.getText().toString();	    		
+		    		UserData owner = dbData.getCurrentUser();	
+		    		newChar.setName(charName);
+		    		newChar.setOwnerId(owner.getId());
+		    		newChar.setSystem("");
+		    		newChar.setPublic(false);
+		    		newChar.setShared(false);
+		    		dbData.insertCharacter(newChar);
+		    	}
+	    		else
+	    		{
+	    			CharacterData baseChar = dbData.getCharacter(dbData.getCurrentUser().getId(), baseCharName);
+	    			charName = mEditName.getText().toString();
+	    			dbData.DuplicateCharacter(baseChar, charName, dbData.getCurrentUser().getId());
+	    		}
 	
 	    		callDialogListeners();
 	    		

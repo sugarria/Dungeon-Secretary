@@ -251,6 +251,50 @@ public class DungeonDataSource {
 		return characters;
 	}
 	
+	public void DuplicateCharacter(CharacterData baseChar, String newName, long newOwnerId)
+	{
+		//first make and insert the new character
+		CharacterData newChar = new CharacterData();
+		newChar.setName(newName);
+		newChar.setOwnerId(newOwnerId);
+		newChar.setSystem(baseChar.getSystem());
+		newChar.setPublic(false);
+		newChar.setShared(false);
+		//get data from character and insert it
+		ContentValues values = new ContentValues();
+		values.put(MySQLiteHelper.CHARACTERS_COLUMN_OWNER_ID, newChar.getOwnerId());
+		values.put(MySQLiteHelper.CHARACTERS_COLUMN_NAME, newChar.getName());
+		values.put(MySQLiteHelper.CHARACTERS_COLUMN_PUBLIC, newChar.getPublic());
+		values.put(MySQLiteHelper.CHARACTERS_COLUMN_SHARED, newChar.getShared());
+		values.put(MySQLiteHelper.CHARACTERS_COLUMN_SYSTEM, newChar.getSystem());
+		long insertId = database.insert(MySQLiteHelper.TABLE_CHARACTERS,  null,  values);
+		newChar.setId(insertId);
+		
+		//duplicate all of the stats
+		List<StatData> baseStats = getAllStatsForCharacter(baseChar.getId());
+		for(int i = 0; i < baseStats.size(); i++)
+		{
+			StatData stat = baseStats.get(i);
+			stat.setCharacterId(newChar.getId());
+			insertStat(stat);
+		}
+		//duplicate all of the sheet fields
+		List<SheetFieldData> baseFields = getAllFieldsForCharacter(baseChar.getId());
+		for(int i = 0; i < baseFields.size(); i++)
+		{
+			SheetFieldData field = baseFields.get(i);
+			field.setCharId(newChar.getId());
+			//if it was a reference to a stat, need to find the new stat
+			if(field.getStatId() != dbNullNum)
+			{
+				StatData baseStat = getStat(field.getStatId());
+				StatData newStat = getStat(newChar.getId(), baseStat.getName());
+				field.setStatId(newStat.getId());
+			}
+			insertSheetField(field);
+		}
+	}
+	
 	private CharacterData characterAtCursor(Cursor cursor) {
 		if(cursor.isAfterLast())
 		{
@@ -275,6 +319,7 @@ public class DungeonDataSource {
 	public void insertStat(StatData stat)
 	{
 		//duplication/error checking
+		//check for same charId and name
 		//get data from character and insert it
 		ContentValues values = new ContentValues();
 		values.put(MySQLiteHelper.STATS_COLUMN_CHARACTER_ID, stat.getCharacterId());

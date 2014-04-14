@@ -34,9 +34,7 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_label"
-        android:layout_toRightOf="@id/lbl_stat"
-        android:entries="@array/math_operation"
-        android:prompt="@string/select" />     
+        android:layout_toRightOf="@id/lbl_stat"/>     
 
      <Button
          android:id="@+id/btn_set_label"
