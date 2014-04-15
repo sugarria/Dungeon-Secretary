@@ -62,13 +62,13 @@ public class ChangeSystemDialog extends DialogFragment implements OnClickListene
 	    	{
 	    		String newSystem = mEditSystem.getText().toString();
 	    		CharacterData ch = dbData.getCurrentCharacter();
-	    		if (ch.getOwnerId() == dbData.getCurrentUser().getId())
+	    		if (ch.getOwnerId() == dbData.getCurrentUser().getId() && (ch.getShared() || ch.getPublic()))
 	    		{
 		    		CloudOperations.deleteCharacterFromCloud(ch.getName(), dbData.getCurrentUser().getGoogleAccount(), ch.getSystem());
 	    		}
 	    		ch.setSystem(newSystem);
 	    		dbData.updateCharacter(ch);
-	    		if (ch.getOwnerId() == dbData.getCurrentUser().getId())
+	    		if (ch.getOwnerId() == dbData.getCurrentUser().getId() && (ch.getShared() || ch.getPublic()))
 	    		{
 	    			CloudOperations.sendCharacterToCloud(ch.getName(), dbData.getCurrentUser().getId(), ch.getSystem(), ch.getShared(), ch.getPublic(), getActivity().getApplicationContext());
 	    		}
