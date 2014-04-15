@@ -311,9 +311,22 @@ public class DungeonDataSource {
 	}
 	
 	public void deleteCharacter(long id) {
-		System.out.println("Character deleted with id: " + id);
+		//delete all of its fields
+		List<SheetFieldData> fields = getAllFieldsForCharacter(id);
+		for(int i = 0; i < fields.size(); i++)
+		{
+			deleteField(fields.get(i).getCharId(), fields.get(i).getIndex());
+		}
+		//delete all of its stats
+		List<StatData> stats = getAllStatsForCharacter(id);
+		for(int i = 0; i < stats.size(); i++)
+		{
+			deleteStat(stats.get(i).getId());
+		}
+		//delete character
 		database.delete(MySQLiteHelper.TABLE_CHARACTERS, 
-				MySQLiteHelper.CHARACTERS_COLUMN_ID + " = " + id, null);		
+				MySQLiteHelper.CHARACTERS_COLUMN_ID + " = " + id, null);
+		//delete all of the stats and fields for this character
 	}
 	
 	public long insertStat(StatData stat)

@@ -462,19 +462,6 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 		{
 			fragment = fragmentBuilder(allCharacters.get(position).getId(), allCharacters.get(position).getName());
 			
-			/* I extracted the following code into fragmentBuilder - Eric
-			Fragment fragment = new StatListPageActivity();
-			Bundle bundle = new Bundle();
-		
-			//Probably change this to use the adapter
-			long charId = allCharacters.get(position).getId();
-			bundle.putLong("charId", charId);
-		
-			fragment.setArguments(bundle);
-			setTitle(allCharacters.get(position).getName());
-		
-			dbData.setCurrentCharacter(charId);
-			 */
 		}
 		
 		// Signals an intention to do something
@@ -484,14 +471,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 		if (fragment != null)
 		{
 			fragmentDisplayer(leftMDrawerList, leftMDrawerLayout, leftDrawer, fragment, position);
-			/* I extracted the following code into fragmentDisplayer - Eric
-			FragmentManager fragmentManager = getSupportFragmentManager();
-			fragmentManager.beginTransaction().replace(R.id.frame_container,  fragment).commit();
-			//update selected item and title, then close the drawer
-			leftMDrawerList.setItemChecked(position, true);
-			leftMDrawerList.setSelection(position);
-			leftMDrawerLayout.closeDrawer(leftDrawer);
-			*/
+			
 		}
 	}
 		
@@ -596,6 +576,12 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         	ChangeSystemDialog csys = new ChangeSystemDialog();
         	csys.addDialogListener(this);
         	csys.show(fm, "fragment_change_system");
+        }
+        case R.id.action_delete:
+        {
+        	dbData.deleteCharacter(dbData.getCurrentCharacter().getId());
+        	fillCharacterList();
+        	displayView(-1);
         }
         default:
             return super.onOptionsItemSelected(item);

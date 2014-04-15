@@ -20,6 +20,12 @@
         android:orderInCategory="10"
         android:showAsAction="never"
         android:title="Change Game System"/>  
+        
+    <item
+        android:id="@+id/action_delete"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="Delete Character"/>
     
     <item
         android:id="@+id/action_settings"
