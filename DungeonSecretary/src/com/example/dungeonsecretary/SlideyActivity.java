@@ -367,6 +367,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 			{
 				dbData.insertCharacter(importChar);
 				importID = dbData.getCharacter(importUser.getId(), importChar.getName()).getId();
+				temp = dbData.getCharacter(importUser.getId(), importChar.getName());
 			}
 			else // delete local stats for the character and download stats from cloud to update
 			{
@@ -541,6 +542,12 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         		currentChar.setShared(false);
         		currentChar.setPublic(false);
         		dbData.updateCharacter(currentChar);
+        		
+        		if (dbData.getCurrentUser().getId() == currentChar.getOwnerId())
+        		{
+        			CloudOperations.sendCharacterToCloud(currentChar.getName(), dbData.getCurrentUser().getId(), currentChar.getSystem(),
+        												 currentChar.getShared(), currentChar.getPublic(), getApplicationContext());
+        		}
         	}
         	return true;
         }
@@ -554,6 +561,13 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         		currentChar.setShared(true);
         		currentChar.setPublic(false);
         		dbData.updateCharacter(currentChar);
+    			// update character to cloud every time a stat is deleted
+        		
+        		if (dbData.getCurrentUser().getId() == currentChar.getOwnerId())
+        		{
+        			CloudOperations.sendCharacterToCloud(currentChar.getName(), dbData.getCurrentUser().getId(), currentChar.getSystem(),
+        												 currentChar.getShared(), currentChar.getPublic(), getApplicationContext());
+        		}
         	}
         	return true;
         }
@@ -567,6 +581,12 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         		currentChar.setShared(true);
         		currentChar.setPublic(true);
         		dbData.updateCharacter(currentChar);
+        		
+        		if (dbData.getCurrentUser().getId() == currentChar.getOwnerId())
+        		{
+        			CloudOperations.sendCharacterToCloud(currentChar.getName(), dbData.getCurrentUser().getId(), currentChar.getSystem(),
+        												 currentChar.getShared(), currentChar.getPublic(), getApplicationContext());
+        		}
         	}
         	return true;
         }
