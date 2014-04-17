@@ -15,6 +15,7 @@ import com.example.dungeonsecretary.StatListPageActivity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -27,6 +28,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -42,13 +44,17 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 	private EditText finalValueEditText;
 	private Spinner operation;
 	
+	private LinearLayout editStatLayout;
+	private TextView textResult;
+	private int childIndex=0;
+	
 	String statName;
 	String statType;
 	String statValue1;
 	String statValue2;
 	String operationResult;
 	String statValue;
-	String statEquation;
+	String statEquation="";
 	String value1FromEq;
     String operationFromEq;
     String value2FromEq;
@@ -83,53 +89,86 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
        
       nameTextView = (TextView)view.findViewById(R.id.edit_txt_your_name);
       typeTextView = (TextView)view.findViewById(R.id.edit_txt_your_type);
-      value1EditText = (EditText) view.findViewById(R.id.edit_txt_your_value1);
-      value2EditText = (EditText) view.findViewById(R.id.edit_txt_your_value2);
-   	  finalValueEditText = (EditText) view.findViewById(R.id.edit_txt_your_value);
-   	  operation = (Spinner) view.findViewById(R.id.edit_txt_your_operation);
-   	  
+      editStatLayout = (LinearLayout)view.findViewById(R.id.edit_stat);
+      textResult = (TextView)view.findViewById(R.id.text_result);
+       
    	  editStat = dbData.getStat(charId, statNameToEdit); 
    	  
    	  nameTextView.setText(editStat.getName());
-   	  typeTextView.setText(editStat.getType());
+   	  typeTextView.setText("Number");
    	  
+   	  EquationAlgorithm algor = new EquationAlgorithm(getActivity().getApplicationContext());
+   	  List<String> views = algor.tokenizer(editStat.getValue());
+   	  for(int i=0; i <views.size() ; i++){
+   		  if(isNumeric(views.get(i))){
+   			  EditText editText = new EditText(view.getContext());
+   			  editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+   			  editText.setId(3);
+   			  editText.setText(views.get(i));
+   			  editStatLayout.addView(editText, childIndex);   
+   			  
+   		  }else if(views.get(i).equals("+") || views.get(i).equals("-") || 
+   				views.get(i).equals("x") || views.get(i).equals("/")){
+   			  
+   			  Spinner spinner = new Spinner(view.getContext());
+   			  spinner.setId(2);
+   			  List<String> SpinnerOperation =  new ArrayList<String>();
+   			  SpinnerOperation.add("+");
+  			  SpinnerOperation.add("-");
+  			  SpinnerOperation.add("x");
+  			  SpinnerOperation.add("/");
+  			 ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, SpinnerOperation);
+		       adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		       spinner.setAdapter(adapter);
+  			  
+   			  if(views.get(i).equals("+")){
+   				spinner.setSelection(0);
+   			  }else if(views.get(i).equals("-")){
+   				spinner.setSelection(1);  				  
+   			  }else if(views.get(i).equals("x")){
+   				spinner.setSelection(2);
+   				  
+   			  }else if(views.get(i).equals("/")){
+   				spinner.setSelection(3);
+   				  
+   			  }
+   			 
+ 			  editStatLayout.addView(spinner, childIndex);  
+   			  
+   		  }else{//a stat
+   			Spinner mSpinnerOtherStat = new Spinner(view.getContext());
+			mSpinnerOtherStat.setId(1);
+			int indexOfSelection=0;
+			List<StatData> allStats = dbData.getAllStatsForCharacter(charId);
+			
+			List<String> mSpinnerOtherStatArray =  new ArrayList<String>();
+			for(int j=0; j < allStats.size(); j++){
+				if(allStats.get(j).getType().equals("Number")){//should be equal number
+					mSpinnerOtherStatArray.add(allStats.get(j).getName());
+					if(views.get(i).equals(allStats.get(j).getName())){
+						indexOfSelection = j;
+					}
+				}
+			}
+		     
+		       ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, mSpinnerOtherStatArray);
+		       adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		       mSpinnerOtherStat.setAdapter(adapter);
+		       mSpinnerOtherStat.setSelection(indexOfSelection);
+		       editStatLayout.addView(mSpinnerOtherStat, childIndex);
+   		  }
+   		childIndex++;
+   	  }
+   	  
+   	  textResult.setText(Integer.toString(algor.getValue(editStat.getValue(), charId)));
    	  statName = editStat.getName();
-   	  statType = editStat.getType();
    	  
-   	if (editStat.getValue().contains("|")) {
-    	String[] values= editStat.getValue().split("\\|");
-        value1FromEq = values[0];
-        operationFromEq = values[1];
-        value2FromEq = values[2];
-        value1EditText.setText(value1FromEq);
-     	value2EditText.setText(value2FromEq);
-     	finalValueEditText.setText(changeToFinalValue(editStat.getValue()));
-   	}
-   	  
-   	  
-   	  if(operation.equals("+")){
-   		operation.setSelection(0);
-   	  }
-   	  else if(operation.equals("-")){
-   		operation.setSelection(1);
-   	  }
-   	  else if(operation.equals("*")){
-   		operation.setSelection(2);
-   	  }
-   	  else if(operation.equals("/")){
-   		operation.setSelection(3);
-   	  }
-     
        Button btn_cancel = (Button) view.findViewById(R.id.btn_edit_cancel);
-       Button btn_delete= (Button) view.findViewById(R.id.btn_edit_delete);
        Button btn_save= (Button) view.findViewById(R.id.btn_edit_save);
     
-       getDialog().setTitle("Enter Stat Name");
-            
-       
-       operation.setOnItemSelectedListener(this);      
+       getDialog().setTitle("Edit Stat");
+               
        btn_cancel.setOnClickListener(this);
-       btn_delete.setOnClickListener(this);
        btn_save.setOnClickListener(this);
        
        //mEditTextStatValue1.addTextChangedListener(updateStatValue);
@@ -146,7 +185,43 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
     	{
     		Bundle bundle = this.getArguments();
     		charId = bundle.getLong("charId");
-  
+    		statNameToEdit = bundle.getString("statNameToEdit");
+    		
+    		for(int i =0; i<childIndex; i++){
+    			if(editStatLayout.getChildAt(i).getId() == 1){
+    				Spinner spinner1 =(Spinner) editStatLayout.getChildAt(i);
+    				String nameofStat = spinner1.getSelectedItem().toString();
+    				statEquation= statEquation + nameofStat +"|";
+    			}
+    			else if(editStatLayout.getChildAt(i).getId() == 3){
+    				EditText edittext3 = (EditText) editStatLayout.getChildAt(i);
+    				String editTextResult="";
+    				if (edittext3.getText().toString().equals("")){
+    					editTextResult="0";
+    					statEquation= statEquation + editTextResult+"|";
+    				}
+    				else{
+    					statEquation= statEquation + edittext3.getText().toString()+"|";
+    				}
+    				
+    				
+    			}
+    			else if(editStatLayout.getChildAt(i).getId() == 2){
+    				Spinner spinner2 =(Spinner) editStatLayout.getChildAt(i);
+    				String opName = spinner2.getSelectedItem().toString();//will return the operation
+    				statEquation= statEquation + opName +"|";
+    			}
+    		}
+    		
+    		
+    		EquationAlgorithm eqAlgorithm = new EquationAlgorithm(this.getActivity().getApplicationContext());
+    		int showResult = eqAlgorithm.getValue(statEquation, charId);
+    		textResult.setText(Integer.toString(showResult));
+    	  		
+    		editStat = dbData.getStat(charId, statNameToEdit); 
+    		editStat.setValue(statEquation);
+    		dbData.updateStat(editStat);
+    		/*
     		statValue1 = value1EditText.getText().toString();
     		statValue2 = value2EditText.getText().toString();
     		StatData statValueFromOther;
@@ -188,7 +263,7 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
     	   	editStat = dbData.getStat(charId, statNameToEdit); 
     		editStat.setValue(statEquation);
     		dbData.updateStat(editStat);
-
+	*/
     		// update character to cloud every time a stat is updated
     		CharacterData thisChar = dbData.getCharacter(charId);
     		if (dbData.getCurrentUser().getId() == thisChar.getOwnerId() && (thisChar.getShared() || thisChar.getPublic()))

@@ -19,12 +19,22 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#FFFFFF" 
             android:layout_weight="1"/>
+         <Button
+            android:id="@+id/btn_plus_text"
+            android:background="#444444"
+            android:layout_width="70dp"
+            android:onClick="showAddStat"
+            android:text="@string/plus_text"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/btn_plus"
             android:background="#444444"
+            android:layout_marginLeft="5dp"
+            android:layout_width="70dp"
             android:onClick="showAddStat"
-            android:text="@string/plus"
+            android:text="@string/plus_value"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
      </TableRow>

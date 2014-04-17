@@ -7,7 +7,6 @@ import java.util.Map;
 
 import com.example.dungeonsecretary.sql.*;
 import com.example.dungeonsecretary.NewStat;
-import com.example.dungeonsecretary.EditStat;
 import com.example.dungeonsecretary.adapter.CharacterDrawerListAdapter;
 import com.example.dungeonsecretary.adapter.StatListAdapter;
 import com.example.dungeonsecretary.interfaces.DialogListener;
@@ -74,6 +73,9 @@ public class StatListPageActivity extends Fragment implements OnClickListener, D
         btnPlus = (Button)rootView.findViewById(R.id.btn_plus);
         btnPlus.setOnClickListener(this);
         
+        btnPlus = (Button)rootView.findViewById(R.id.btn_plus_text);
+        btnPlus.setOnClickListener(this);
+        
         dbData = DungeonDataSource.getInstance(getActivity().getApplicationContext());
 		
 		charId = dbData.getCurrentCharacter().getId();
@@ -116,6 +118,18 @@ public class StatListPageActivity extends Fragment implements OnClickListener, D
 	    		ad.show(fm, "fragment_add_stat");
 	    		break;
 			}
+			case R.id.btn_plus_text:
+	    	{   		
+	    		//pop up add window
+	    		FragmentManager fm = getActivity().getSupportFragmentManager();
+	    		AddStatTextDialog adText = new AddStatTextDialog();
+	    		adText.addDialogListener(this);
+	    		Bundle bundle = new Bundle();	
+				bundle.putLong("charId",charId);
+				adText.setArguments(bundle);
+	    		adText.show(fm, "fragment_add_stat_text");
+	    		break;
+			}
 		}		
 	}
 	
@@ -143,15 +157,27 @@ public class StatListPageActivity extends Fragment implements OnClickListener, D
 		{
 			//open the edit dialog here
 			FragmentManager fm = getActivity().getSupportFragmentManager();
+			//for edit stat value
     		EditStatDialog ed = new EditStatDialog();
     		ed.addDialogListener(StatListPageActivity.this);
+    		//for edit stat text
+    		EditStatTextDialog edText = new EditStatTextDialog();
+    		edText.addDialogListener(StatListPageActivity.this);
+    		//bundle
     		Bundle bundle = new Bundle();	
 			bundle.putLong("charId",charId);
 			StatData statToEdit = (StatData)statListAdapter.getItem(position);
 			String statNameToEdit = statToEdit.getName();
+			String statType = statToEdit.getType();
 			bundle.putString("statNameToEdit", statNameToEdit);
-			ed.setArguments(bundle);
-    		ed.show(fm, "fragment_edit_stat");
+			bundle.putString("statType", statType);
+			if(statType.equals("Text")){
+				edText.setArguments(bundle);
+	    		edText.show(fm, "fragment_edit_stat_text");
+			}else{
+				ed.setArguments(bundle);
+	    		ed.show(fm, "fragment_edit_stat");
+			}
 		}
 	}
 

@@ -7,7 +7,6 @@ import java.util.Map;
 
 import com.example.dungeonsecretary.sql.*;
 import com.example.dungeonsecretary.NewStat;
-import com.example.dungeonsecretary.EditStat;
 import com.example.dungeonsecretary.adapter.CharacterDrawerListAdapter;
 import com.example.dungeonsecretary.adapter.StatListAdapter;
 import com.example.dungeonsecretary.model.CharacterData;

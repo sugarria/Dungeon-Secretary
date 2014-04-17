@@ -24,7 +24,8 @@
     <string name="stat_value">Value</string>
     <string name="stat_type">Type</string>
     <string name="put_equation">Put Equation</string>
-    <string name="plus">+</string>
+    <string name="plus_text">+ Text</string>
+    <string name="plus_value">+ Value</string>
     
     <!-- for button -->
      <string name="btn_cancel">Cancel</string>
@@ -42,6 +43,11 @@
         <item>-</item>
         <item>x</item>
         <item>/</item>
+    </string-array>
+    
+    <string-array name="stat_type_selection">
+        <item>Text</item>
+        <item>Number</item>
     </string-array>
     
     <!-- Nav Drawer Menu Items -->

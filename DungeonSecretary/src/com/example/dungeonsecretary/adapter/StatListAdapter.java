@@ -1,9 +1,12 @@
 package com.example.dungeonsecretary.adapter;
 
+import com.example.dungeonsecretary.EquationAlgorithm;
 import com.example.dungeonsecretary.R;
 import com.example.dungeonsecretary.model.StatData;
+import com.example.dungeonsecretary.sql.DungeonDataSource;
  
 import java.util.ArrayList;
+import java.util.List;
  
 import android.app.Activity;
 import android.content.Context;
@@ -17,11 +20,13 @@ public class StatListAdapter extends BaseAdapter {
      
     private Context context;
     private ArrayList<StatData> StatDataList;
+    private ArrayList<String> statValues;
     private int finalValue;
     String[] values;
     String value1;
     String operation;
     String value2;
+    DungeonDataSource dbData;
      
     public StatListAdapter(Context context, ArrayList<StatData> StatDataList){
         this.context = context;
@@ -51,40 +56,28 @@ public class StatListAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.stat_entry, null);
         }
         
+        dbData = DungeonDataSource.getInstance(convertView.getContext());
+        
         TextView statId =(TextView) convertView.findViewById(R.id.statId);
         TextView statName =(TextView) convertView.findViewById(R.id.statName);
         TextView statValue = (TextView) convertView.findViewById(R.id.statValue);
                  
         statId.setText(String.valueOf(StatDataList.get(position).getId()));
-        statName.setText(StatDataList.get(position).getName());
-        
-        //take the equation from the value
-        //parse the equation to calculate the value
-        if (StatDataList.get(position).getValue().contains("|")) {
-        	values= StatDataList.get(position).getValue().split("\\|");
-            value1 = values[0];
-            operation = values[1];
-            value2 = values[2];
-            
-            if(operation.equals("+")){
-            	finalValue = Integer.parseInt(value1) + Integer.parseInt(value2);
-            }
-            else if(operation.equals("-")){
-            	finalValue = Integer.parseInt(value1) - Integer.parseInt(value2);
-            }
-            else if(operation.equals("x")){
-            	finalValue = Integer.parseInt(value1) * Integer.parseInt(value2);
-            }
-            else if(operation.equals("/")){
-            	finalValue = Integer.parseInt(value1) / Integer.parseInt(value2);
-            }
-           
-            statValue.setText(Integer.toString(finalValue));
-        } else {
+        statName.setText(StatDataList.get(position).getName());      
+        if(StatDataList.get(position).getType().equals("Number")){
+	        EquationAlgorithm eqAlgorithm = new EquationAlgorithm(convertView.getContext());
+			int showResult = eqAlgorithm.getValue(StatDataList.get(position).getValue(), StatDataList.get(position).getCharacterId());
+	        statValue.setText(Integer.toString(showResult));
+        }else{
         	statValue.setText(StatDataList.get(position).getValue());
         }
-        
+
         return convertView;
     }
+    public static boolean isNumeric(String str)
+	{
+	  return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
+	}
+
  
 }
