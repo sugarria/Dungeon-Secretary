@@ -108,9 +108,13 @@ public class CharSheetFragment extends Fragment implements OnClickListener, Dial
     		return field.getLabel();
     	}
     	StatData stat = dbData.getStat(field.getStatId());
-    	EquationAlgorithm algor = new EquationAlgorithm(this.getActivity().getApplicationContext());
-    	int result = algor.getValue(stat.getValue(), stat.getCharacterId());
-    	return Integer.toString(result);
+    	if(stat.getType().equals("Text")){
+    		return stat.getValue();
+    	}else{
+	    	EquationAlgorithm algor = new EquationAlgorithm(this.getActivity().getApplicationContext());
+	    	int result = algor.getValue(stat.getValue(), stat.getCharacterId());
+	    	return Integer.toString(result);
+    	}
     }
 
     
