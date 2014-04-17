@@ -16,6 +16,9 @@
     <string name="stat_edit">Edit</string>
     <string name="stat_delete">Delete</string>
     
+    <!--  Popup Menu test -->
+    <string name="popup_delete">Delete</string>
+    
     <!-- Text View For Stat Page -->
     <string name="stat_list_page">Statistic List</string>
     <string name="add_stat">Add Statistic</string>

@@ -367,6 +367,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 			{
 				dbData.insertCharacter(importChar);
 				importID = dbData.getCharacter(importUser.getId(), importChar.getName()).getId();
+				temp = dbData.getCharacter(importUser.getId(), importChar.getName());
 			}
 			else // delete local stats for the character and download stats from cloud to update
 			{
@@ -462,19 +463,6 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 		{
 			fragment = fragmentBuilder(allCharacters.get(position).getId(), allCharacters.get(position).getName());
 			
-			/* I extracted the following code into fragmentBuilder - Eric
-			Fragment fragment = new StatListPageActivity();
-			Bundle bundle = new Bundle();
-		
-			//Probably change this to use the adapter
-			long charId = allCharacters.get(position).getId();
-			bundle.putLong("charId", charId);
-		
-			fragment.setArguments(bundle);
-			setTitle(allCharacters.get(position).getName());
-		
-			dbData.setCurrentCharacter(charId);
-			 */
 		}
 		
 		// Signals an intention to do something
@@ -484,14 +472,7 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
 		if (fragment != null)
 		{
 			fragmentDisplayer(leftMDrawerList, leftMDrawerLayout, leftDrawer, fragment, position);
-			/* I extracted the following code into fragmentDisplayer - Eric
-			FragmentManager fragmentManager = getSupportFragmentManager();
-			fragmentManager.beginTransaction().replace(R.id.frame_container,  fragment).commit();
-			//update selected item and title, then close the drawer
-			leftMDrawerList.setItemChecked(position, true);
-			leftMDrawerList.setSelection(position);
-			leftMDrawerLayout.closeDrawer(leftDrawer);
-			*/
+			
 		}
 	}
 		
@@ -561,6 +542,12 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         		currentChar.setShared(false);
         		currentChar.setPublic(false);
         		dbData.updateCharacter(currentChar);
+        		
+        		if (dbData.getCurrentUser().getId() == currentChar.getOwnerId())
+        		{
+        			CloudOperations.sendCharacterToCloud(currentChar.getName(), dbData.getCurrentUser().getId(), currentChar.getSystem(),
+        												 currentChar.getShared(), currentChar.getPublic(), getApplicationContext());
+        		}
         	}
         	return true;
         }
@@ -574,6 +561,13 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         		currentChar.setShared(true);
         		currentChar.setPublic(false);
         		dbData.updateCharacter(currentChar);
+    			// update character to cloud every time a stat is deleted
+        		
+        		if (dbData.getCurrentUser().getId() == currentChar.getOwnerId())
+        		{
+        			CloudOperations.sendCharacterToCloud(currentChar.getName(), dbData.getCurrentUser().getId(), currentChar.getSystem(),
+        												 currentChar.getShared(), currentChar.getPublic(), getApplicationContext());
+        		}
         	}
         	return true;
         }
@@ -587,6 +581,12 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         		currentChar.setShared(true);
         		currentChar.setPublic(true);
         		dbData.updateCharacter(currentChar);
+        		
+        		if (dbData.getCurrentUser().getId() == currentChar.getOwnerId())
+        		{
+        			CloudOperations.sendCharacterToCloud(currentChar.getName(), dbData.getCurrentUser().getId(), currentChar.getSystem(),
+        												 currentChar.getShared(), currentChar.getPublic(), getApplicationContext());
+        		}
         	}
         	return true;
         }
@@ -596,6 +596,12 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         	ChangeSystemDialog csys = new ChangeSystemDialog();
         	csys.addDialogListener(this);
         	csys.show(fm, "fragment_change_system");
+        }
+        case R.id.action_delete:
+        {
+        	dbData.deleteCharacter(dbData.getCurrentCharacter().getId());
+        	fillCharacterList();
+        	displayView(-1);
         }
         default:
             return super.onOptionsItemSelected(item);
