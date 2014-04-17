@@ -133,24 +133,6 @@ public class StatListPageActivity extends Fragment implements OnClickListener, D
 		}		
 	}
 	
-	public void SampleStats()
-	{
-		StatData newStat = new StatData();
-		newStat.setCharacterId(charId);
-		newStat.setName("Stat 1");
-		newStat.setType("Text");
-		newStat.setValue("HELLO");
-		dbData.insertStat(newStat);
-		
-		StatData newStat2 = new StatData();
-		newStat2.setCharacterId(charId);
-		newStat2.setName("Stat 2");
-		newStat2.setType("Number");
-		newStat2.setValue("15");
-		dbData.insertStat(newStat2);
-	}
-		
-	
 	private class StatListClickListener implements ListView.OnItemClickListener
 	{
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) 

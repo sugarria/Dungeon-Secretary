@@ -71,7 +71,7 @@ public class MainActivity extends Activity implements OnClickListener,
 
 	//If you need to manually reset the database and build it from scratch 
 	//when the activity starts set this to true.
-	private boolean DEV_resetDatabase = true;
+	private boolean DEV_resetDatabase = false;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -38,20 +38,20 @@ import android.widget.TextView.OnEditorActionListener;
 import android.view.inputmethod.EditorInfo;
 
 
-public class AddStatDialog extends DialogFragment implements OnClickListener, OnItemSelectedListener {
+public class AddStatDialog extends DialogFragment implements OnClickListener {
 	private EditText mEditTextStatName;
 	private Spinner mSpinnerStatOption;
 	private Button mButtonStatOption;
 	private LinearLayout statAddLayout;
 	private TextView mEditTextResult;
-	
+
 	//for adding new View
 	private Spinner mSpinnerOtherStat;
 	private Spinner mSpinnerOperation;
 	private EditText mEditTextNumber;
 	private int childIndex=0;
 	View view;
-	
+
 	String statName;
 	String statType;
 	String statValue1;
@@ -60,20 +60,20 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
 	String statValue;
 	String statEquation="";
 	String statTypeResult;
-	
+
 	String optionResult;
-	
+
 	DungeonDataSource dbData;
 	long charId;
 	int value;
 
 	private List<DialogListener> listeners;
-	
+
 	public AddStatDialog() {
 	       listeners = new ArrayList<DialogListener>();
     }
-	
-	 
+
+
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -116,13 +116,11 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
        mSpinnerStatOption.setAdapter(adapter);
        
-       //mEditTextStatValue1.addTextChangedListener(updateStatValue);
-       //mEditTextStatValue1.addTextChangedListener(updateStatValue);
 
         return view;
     }
-	
-	
+
+
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
@@ -150,8 +148,8 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
 		    				else{
 		    					statEquation= statEquation + edittext3.getText().toString()+"|";
 		    				}
-		    				
-		    				
+
+
 		    			}
 		    			else if(statAddLayout.getChildAt(i).getId() == 2){
 		    				Spinner spinner2 =(Spinner) statAddLayout.getChildAt(i);
@@ -159,12 +157,12 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
 		    				statEquation= statEquation + opName +"|";
 		    			}
 		    		}
-		    		
-		    		
+
+
 		    		EquationAlgorithm eqAlgorithm = new EquationAlgorithm(this.getActivity().getApplicationContext());
 		    		int showResult = eqAlgorithm.getValue(statEquation, charId);
 		    		mEditTextResult.setText(Integer.toString(showResult));
-		    	
+
 		    		statName = mEditTextStatName.getText().toString();
 		    		StatData newStat = new StatData();	
 		    		newStat.setName(statName);
@@ -172,7 +170,7 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
 		    		newStat.setType("Number");
 		    		newStat.setValue(statEquation);
 		    		dbData.insertStat(newStat);
-	
+
 		    		// update character to cloud every time a stat is created; currently uploads all characters as public
 		    		CharacterData thisChar = dbData.getCharacter(charId);
 		    		if (dbData.getCurrentUser().getId() == thisChar.getOwnerId() && (thisChar.getShared() || thisChar.getPublic()))
@@ -180,7 +178,7 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
 		    			CloudOperations.sendCharacterToCloud(thisChar.getName(), dbData.getCurrentUser().getId(), thisChar.getSystem(),
 		    											 	 thisChar.getShared(), thisChar.getPublic(), getActivity().getApplicationContext());
 		    		}
-		    		
+
 		    		callDialogListeners();
 		    		this.dismiss();
 	    		}
@@ -200,38 +198,38 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
 					mSpinnerOtherStat = new Spinner(view.getContext());
 					mSpinnerOtherStat.setLayoutParams(params);
 					mSpinnerOtherStat.setId(1);
-					
+
 					Bundle bundle = this.getArguments();
 		    		charId = bundle.getLong("charId");
 					List<StatData> allStats = dbData.getAllStatsForCharacter(charId);
-					
+
 					List<String> mSpinnerOtherStatArray =  new ArrayList<String>();
 					for(int i=0; i < allStats.size(); i++){
 						if(allStats.get(i).getType().equals("Number")){//should be equal number
 							mSpinnerOtherStatArray.add(allStats.get(i).getName());
 						}
 					}
-				     
+
 				       ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, mSpinnerOtherStatArray);
 				       adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				       mSpinnerOtherStat.setAdapter(adapter);
-				//	mSpinnerOtherStat.setOnItemSelectedListener(this);
+				
 					statAddLayout.addView(mSpinnerOtherStat, childIndex);
-					
+
 					List<String> SpinnerArray =  new ArrayList<String>();
 				       SpinnerArray.add("Operation");
-				     
+
 				       ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, SpinnerArray);
 				       adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				       mSpinnerStatOption.setAdapter(adapter2);
-				    //   mSpinnerStatOption.setOnItemSelectedListener(this);
-				       
+				  
+
 				}
 				else if(optionResult.equals("Operation")){
 					mSpinnerOperation = new Spinner(this.getActivity());
 					mSpinnerOperation.setLayoutParams(params);
 					mSpinnerOperation.setId(2);
-					
+
 					List<String> mSpinnerOperationArray =  new ArrayList<String>();
 					mSpinnerOperationArray.add("+");
 					mSpinnerOperationArray.add("-");
@@ -241,12 +239,12 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
 				       ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, mSpinnerOperationArray);
 				       adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				       mSpinnerOperation.setAdapter(adapter);
-				   
-				//    mSpinnerOperation.setOnItemSelectedListener(this);
-				       
+
+			
+
 				    statAddLayout.addView(mSpinnerOperation, childIndex);
 				    //reset the spinner item
-				    
+
 				    List<String> SpinnerArray =  new ArrayList<String>();
 				    SpinnerArray.add("Number");
 				       Bundle bundle = this.getArguments();
@@ -266,7 +264,7 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
 				       adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				       mSpinnerStatOption.setAdapter(adapter2);
 				//       mSpinnerStatOption.setOnItemSelectedListener(this);
-				       
+
 				}
 				else if(optionResult.equals("Number")){
 					mEditTextNumber = new EditText(view.getContext());
@@ -274,115 +272,28 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
 					mEditTextNumber.setId(3);
 					statAddLayout.addView(mEditTextNumber, childIndex);
 					//reset the spinner item
-					
+
 				    List<String> SpinnerArray =  new ArrayList<String>();
 				       SpinnerArray.add("Operation");
-				     
+
 				       ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, SpinnerArray);
 				       adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				       mSpinnerStatOption.setAdapter(adapter2);
-				 //      mSpinnerStatOption.setOnItemSelectedListener(this);
-				      
+				
+
 				}
 				childIndex++;
 				break;
 			}	
 		}
-		
-	}
-	
-	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int pos,
-			long id) {
-		switch(view.getId()){
-		case R.id.spinner_stat_option:
-		//	optionResult = parent.getItemAtPosition(pos).toString();
-			break;
-		
-		}
+
 	}
 
-	@Override
-	public void onNothingSelected(AdapterView<?> arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	private TextWatcher updateStatValue = new TextWatcher(){
 
-		@Override
-		public void afterTextChanged(Editable arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-				int arg3) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-				int arg3) {
-			
-		//	statValue1 = mEditTextStatValue1.getText().toString();
-    	//	statValue2 = mEditTextStatValue2.getText().toString();
-    		if(operationResult.equals("+")){
-    			value = Integer.parseInt(statValue1) ;
-    		}
-    		else if(operationResult.equals("-")){
-    			value = Integer.parseInt(statValue1) ;
-    			
-    		} else if(operationResult.equals("x")){
-    			value = Integer.parseInt(statValue1) ;
-    			
-    		}else if(operationResult.equals("/")){
-    			value = Integer.parseInt(statValue1);
-    			
-    		}
-    	//	mEditTextStatValue.setText(Integer.toString(value));
-			
-		}
-		
-	};
-	
 	public static boolean isNumeric(String str)
 	{
 	  return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
 	}
-	
-	public String changeToFinalValue(String equation){
-		 if (equation.contains("|")) {
-	        	String[] values= equation.split("\\|");
-	            String value1 = values[0];
-	            String operation = values[1];
-	            String value2 = values[2];
-	            
-	            int finalValue=0;
-	            
-	            if(operation.equals("+")){
-	            	finalValue = Integer.parseInt(value1) + Integer.parseInt(value2);
-	            }
-	            else if(operation.equals("-")){
-	            	finalValue = Integer.parseInt(value1) - Integer.parseInt(value2);
-	            }
-	            else if(operation.equals("x")){
-	            	finalValue = Integer.parseInt(value1) * Integer.parseInt(value2);
-	            }
-	            else if(operation.equals("/")){
-	            	finalValue = Integer.parseInt(value1) / Integer.parseInt(value2);
-	            }
-	           
-	            return Integer.toString(finalValue);
-	           
-	        } else {
-	        	return equation;
-	        	
-	        }
-	}
-	   	
 
 	private void callDialogListeners()
 	{
@@ -391,7 +302,7 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
 			listeners.get(i).onDialogFinish(R.id.dialog_add_stat);
 		}
 	}
-	
+
 	public void addDialogListener(DialogListener dl)
 	{
 		listeners.add(dl);
@@ -403,4 +314,3 @@ public class AddStatDialog extends DialogFragment implements OnClickListener, On
    
 
     
-

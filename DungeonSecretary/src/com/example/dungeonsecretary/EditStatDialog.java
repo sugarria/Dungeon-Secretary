@@ -36,7 +36,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.view.inputmethod.EditorInfo;
 
 
-public class EditStatDialog extends DialogFragment implements OnClickListener, OnItemSelectedListener {
+public class EditStatDialog extends DialogFragment implements OnClickListener {
 	private TextView nameTextView;
 	private TextView typeTextView;
 	private EditText value1EditText;
@@ -143,7 +143,7 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 			
 			List<String> mSpinnerOtherStatArray =  new ArrayList<String>();
 			for(int j=0; j < allStats.size(); j++){
-				if(allStats.get(j).getType().equals("Number")){//should be equal number
+				if(allStats.get(j).getType().equals("Number") && !(allStats.get(j).getName().equals(statNameToEdit))){//should be equal number
 					mSpinnerOtherStatArray.add(allStats.get(j).getName());
 					if(views.get(i).equals(allStats.get(j).getName())){
 						indexOfSelection = j;
@@ -171,8 +171,6 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
        btn_cancel.setOnClickListener(this);
        btn_save.setOnClickListener(this);
        
-       //mEditTextStatValue1.addTextChangedListener(updateStatValue);
-       //mEditTextStatValue1.addTextChangedListener(updateStatValue);
 
         return view;
     }
@@ -221,49 +219,7 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
     		editStat = dbData.getStat(charId, statNameToEdit); 
     		editStat.setValue(statEquation);
     		dbData.updateStat(editStat);
-    		/*
-    		statValue1 = value1EditText.getText().toString();
-    		statValue2 = value2EditText.getText().toString();
-    		StatData statValueFromOther;
-    		StatData statValueFromOther2;
     		
-    		//if you get data from other stat
-    		if(!isNumeric(statValue1)){
-    			statValueFromOther = dbData.getStat(charId, statValue1);  			
-    			statValue1 = changeToFinalValue(statValueFromOther.getValue());
-    		}
-    		if(!isNumeric(statValue2)){
-    			statValueFromOther2 = dbData.getStat(charId, statValue2);
-    			statValue2 = changeToFinalValue(statValueFromOther2.getValue());
-    		}
-    		
-    		
-    		if(operationResult.equals("+")){
-    			value = Integer.parseInt(statValue1) + Integer.parseInt(statValue2);
-    			statEquation = statValue1 + "|" + "+" + "|" + statValue2;
-    		}
-    		else if(operationResult.equals("-")){
-    			value = Integer.parseInt(statValue1) - Integer.parseInt(statValue2);
-    			statEquation = statValue1 + "|" + "-" + "|" + statValue2;
-    			
-    		} else if(operationResult.equals("x")){
-    			value = Integer.parseInt(statValue1) * Integer.parseInt(statValue2);
-    			statEquation = statValue1 + "|" + "*" + "|" + statValue2;
-    			
-    		}else if(operationResult.equals("/")){
-    			value = Integer.parseInt(statValue1) / Integer.parseInt(statValue2);
-    			statEquation = statValue1 + "|" + "/" + "|" + statValue2;
-    			
-    		}
-    		finalValueEditText.setText(Integer.toString(value));
-    	
-    		statValue = Integer.toString(value);
-    	
-
-    	   	editStat = dbData.getStat(charId, statNameToEdit); 
-    		editStat.setValue(statEquation);
-    		dbData.updateStat(editStat);
-	*/
     		// update character to cloud every time a stat is updated
     		CharacterData thisChar = dbData.getCharacter(charId);
     		if (dbData.getCurrentUser().getId() == thisChar.getOwnerId() && (thisChar.getShared() || thisChar.getPublic()))
@@ -283,78 +239,10 @@ public class EditStatDialog extends DialogFragment implements OnClickListener, O
 			this.dismiss();
 			break;
 		}	
-		case R.id.btn_edit_delete:
-		{
-			//do nothing
-			/* if this changes later to actually delete the stat, include this block of code
-			// update character to cloud every time a stat is deleted
-    		CharacterData thisChar = dbData.getCharacter(charId);
-    		if (dbData.getCurrentUser().getId() == thisChar.getOwnerId() && (thisChar.getShared() || thisChar.getPublic()))
-    		{
-    			CloudOperations.sendCharacterToCloud(thisChar.getName(), dbData.getCurrentUser().getId(), thisChar.getSystem(),
-    												 thisChar.getShared(), thisChar.getPublic(), getActivity().getApplicationContext());
-    		} 
-			*/
-			this.dismiss();
-			break;
-		}
 		}
 		
 	}
-	
-	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int pos,
-			long id) {
-		operationResult = parent.getItemAtPosition(pos).toString();
-	}
 
-	@Override
-	public void onNothingSelected(AdapterView<?> arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	/*
-	private TextWatcher updateStatValue = new TextWatcher(){
-
-		@Override
-		public void afterTextChanged(Editable arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-				int arg3) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-				int arg3) {
-			
-			statValue1 = mEditTextStatValue1.getText().toString();
-    		statValue2 = mEditTextStatValue2.getText().toString();
-    		if(operationResult.equals("+")){
-    			value = Integer.parseInt(statValue1) ;
-    		}
-    		else if(operationResult.equals("-")){
-    			value = Integer.parseInt(statValue1) ;
-    			
-    		} else if(operationResult.equals("x")){
-    			value = Integer.parseInt(statValue1) ;
-    			
-    		}else if(operationResult.equals("/")){
-    			value = Integer.parseInt(statValue1);
-    			
-    		}
-    		mEditTextStatValue.setText(Integer.toString(value));
-			
-		}
-		
-	};
-	*/
-	
 	public static boolean isNumeric(String str)
 	{
 	  return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.

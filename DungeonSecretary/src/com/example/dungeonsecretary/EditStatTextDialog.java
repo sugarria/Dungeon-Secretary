@@ -81,17 +81,12 @@ public class EditStatTextDialog extends DialogFragment implements OnClickListene
    	  statType = editStat.getType();
      
       Button btn_cancel = (Button) view.findViewById(R.id.btn_edit_cancel);
-      Button btn_delete= (Button) view.findViewById(R.id.btn_edit_delete);
       Button btn_save= (Button) view.findViewById(R.id.btn_edit_save);
     
       getDialog().setTitle("Enter Stat Name");
    
       btn_cancel.setOnClickListener(this);
-      btn_delete.setOnClickListener(this);
       btn_save.setOnClickListener(this);
-       
-       //mEditTextStatValue1.addTextChangedListener(updateStatValue);
-       //mEditTextStatValue1.addTextChangedListener(updateStatValue);
 
         return view;
     }
@@ -129,21 +124,7 @@ public class EditStatTextDialog extends DialogFragment implements OnClickListene
 			this.dismiss();
 			break;
 		}	
-		case R.id.btn_edit_delete:
-		{
-			//do nothing
-			/* if this changes later to actually delete the stat, include this block of code
-			// update character to cloud every time a stat is deleted
-    		CharacterData thisChar = dbData.getCharacter(charId);
-    		if (dbData.getCurrentUser().getId() == thisChar.getOwnerId() && (thisChar.getShared() || thisChar.getPublic()))
-    		{
-    			CloudOperations.sendCharacterToCloud(thisChar.getName(), dbData.getCurrentUser().getId(), thisChar.getSystem(),
-    												 thisChar.getShared(), thisChar.getPublic(), getActivity().getApplicationContext());
-    		} 
-			*/
-			this.dismiss();
-			break;
-		}
+	
 		}
 		
 	}

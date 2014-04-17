@@ -82,7 +82,11 @@ public class AddStatTextDialog extends DialogFragment implements OnClickListener
     		Bundle bundle = this.getArguments();
     		charId = bundle.getLong("charId");
     		statName = mEditTextStatName.getText().toString();
-    		statValue = mEditTextStatText.getText().toString();
+    		if(mEditTextStatText.getText().toString().equals("")){
+    			statValue ="";
+    		}else{
+	    		statValue = mEditTextStatText.getText().toString();
+    		}
     		
     	
     		StatData newStat = new StatData();	
