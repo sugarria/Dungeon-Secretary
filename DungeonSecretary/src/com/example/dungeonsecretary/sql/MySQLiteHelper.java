@@ -75,12 +75,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 			+ FIELDS_COLUMN_STAT_ID + " integer, " 
 			+ FIELDS_COLUMN_LABEL + " text" + ");";
 	
-	private static final String DATABASE_NAME = "dungeonSecretaryTest.db";
+	private static final String DATABASE_NAME = "dungeonSecretary.db";
 	private static final int DATABASE_VERSION = 1;
 	
 	
 	public MySQLiteHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	}
+	
+	/**
+	 * Alternate constructor for testing so you don't overwrite the real db
+	 */
+	public MySQLiteHelper(Context context, String dbName)
+	{
+		super(context, dbName, null, 1);
 	}
 	
 	@Override

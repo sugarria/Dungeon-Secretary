@@ -599,6 +599,8 @@ public class SlideyActivity extends FragmentActivity implements OnClickListener,
         }
         case R.id.action_delete:
         {
+        	CharacterData deleting = dbData.getCurrentCharacter();
+        	CloudOperations.deleteCharacterFromCloud(deleting.getName(), dbData.getCurrentUser().getGoogleAccount(), deleting.getSystem());
         	dbData.deleteCharacter(dbData.getCurrentCharacter().getId());
         	fillCharacterList();
         	displayView(-1);

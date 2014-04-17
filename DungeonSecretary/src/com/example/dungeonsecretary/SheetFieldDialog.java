@@ -156,7 +156,6 @@ public class SheetFieldDialog extends DialogFragment implements OnClickListener{
 	    			CloudOperations.sendCharacterToCloud(thisChar.getName(), dbData.getCurrentUser().getId(), thisChar.getSystem(),
 	    												 thisChar.getShared(), thisChar.getPublic(), getActivity().getApplicationContext());
 	    		}
-	    		
 	    		callDialogListeners();
 				this.dismiss();
 				break;

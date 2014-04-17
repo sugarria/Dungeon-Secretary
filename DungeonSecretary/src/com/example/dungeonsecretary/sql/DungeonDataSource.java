@@ -25,6 +25,10 @@ public class DungeonDataSource {
 	{
 		dbHelper = new MySQLiteHelper(context);
 	}
+	private DungeonDataSource(Context context, String testDbName)
+	{
+		dbHelper = new MySQLiteHelper(context, testDbName);
+	}
 	
 	public static DungeonDataSource getInstance(Context context)
 	{
@@ -34,6 +38,15 @@ public class DungeonDataSource {
 			instance.open();
 		}
 		return instance;
+	}
+	
+	public static DungeonDataSource TESTgetInstance(Context context, String testDbName)
+	{
+		
+		DungeonDataSource testDS = new DungeonDataSource(context, testDbName);
+		testDS.open();
+		
+		return testDS;
 	}
 	
 	
@@ -83,9 +96,16 @@ public class DungeonDataSource {
 	 * @param user
 	 * 		The user to insert into the database. 
 	 */
-	public void insertUser(UserData user)
+	public boolean insertUser(UserData user)
 	{
-		//TODO Duplication/error checking		
+		//TODO Duplication/error checking
+		//duplication/error checking
+		UserData duplicate = getUser(user.getGoogleAccount());
+		if(duplicate != null)
+		{
+			Log.e("SQL", "Attempt to insert duplicate userr " + user.getGoogleAccount());
+			return false;
+		}
 		//read values from the user
 		ContentValues values = new ContentValues();
 		values.put(MySQLiteHelper.USERS_COLUMN_GOOGLE_ACCOUNT, user.getGoogleAccount());
@@ -93,6 +113,7 @@ public class DungeonDataSource {
 		//insert it into the table and set the insert id
 		long insertId = database.insert(MySQLiteHelper.TABLE_USERS,  null,  values);
 		user.setId(insertId);
+		return true;
 	}
 	
 	public void updateUser(UserData user)
