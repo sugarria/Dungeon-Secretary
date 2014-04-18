@@ -15,6 +15,9 @@ public class EquationAlgorithm {
 		dbData = DungeonDataSource.getInstance(context);
 	}
 	
+	public EquationAlgorithm(Context context,  String testDbName){
+		dbData = DungeonDataSource.TESTgetInstance(context, testDbName);
+	}
 	public int getValue(String equationValue, long characterId){
 		int result = evaluateEquation(tokenizer(equationValue),characterId);
 		return result;
